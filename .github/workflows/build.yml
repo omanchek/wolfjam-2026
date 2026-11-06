@@ -78,6 +78,13 @@ jobs:
     if: needs.unity-license.outputs.available == 'true'
     runs-on: ubuntu-latest
     steps:
+      # The Unity image is too large for the free space on a stock runner.
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force
+          df -h /
+
       - uses: actions/checkout@v4
         with:
           lfs: true
