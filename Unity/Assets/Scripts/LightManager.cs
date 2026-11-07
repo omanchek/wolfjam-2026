@@ -41,7 +41,7 @@ public class LightManager : MonoBehaviour
         mousePos = Pointer.current.position.ReadValue();
         mousePos.z = 10; // <-- NOTE: THIS VALUE NEEDS TO BE SET BASED ON HOW ZOOMED OUT THE CAMERA IS
         Vector2 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
-        lightArea.transform.position = worldPos;
+        transform.position = worldPos;
     }
 
     // DOES NOT WORK, NOT SURE WHY
