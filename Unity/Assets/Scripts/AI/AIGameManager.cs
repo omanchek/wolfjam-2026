@@ -56,6 +56,8 @@ public class AIGameManager : MonoBehaviour
     public float SeenDestroyDuration => seenDestroyDuration;
     public Vector2 TargetPosition => target.position;
     public Rect BoardRect => GetCameraRect();
+    public Vector2 SeenZonePosition => seenZonePosition;
+    public float SeenZoneRadius => seenZoneRadius;
 
     public int StartingFriendlyCount { get; private set; }
     public bool HasFriendlyDied { get; private set; }

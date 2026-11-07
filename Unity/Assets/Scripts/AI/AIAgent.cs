@@ -21,6 +21,7 @@ public class AIAgent : MonoBehaviour
     [SerializeField] private bool isSeen;
     [SerializeField] private AIState state;
 
+    private SpriteRenderer spriteRenderer;
     private AIAgent prey;
     private Vector2 wanderDirection;
     private float wanderTimer;
@@ -37,9 +38,16 @@ public class AIAgent : MonoBehaviour
         role = newRole;
     }
 
+    private void Awake()
+    {
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        spriteRenderer.enabled = false; // Stays hidden until its first seen check
+    }
+
     private void Update()
     {
         isSeen = AIGameManager.Instance.IsInSeenZone(transform.position);
+        spriteRenderer.enabled = isSeen;
         UpdatePrey();
         state = GetNextState();
 
