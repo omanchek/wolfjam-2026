@@ -44,6 +44,7 @@ public class AIGameManager : MonoBehaviour
     private bool isRoundActive;
     private Vector2 seenZonePosition;
     private float seenZoneRadius;
+    [SerializeField] private LightManager lightManager;
 
     public float FriendlySpeed => friendlySpeed;
     public float EnemySpeed => enemySpeed;
@@ -58,6 +59,7 @@ public class AIGameManager : MonoBehaviour
     public Rect BoardRect => GetCameraRect();
     public Vector2 SeenZonePosition => seenZonePosition;
     public float SeenZoneRadius => seenZoneRadius;
+    public LightManager GetLightManager => lightManager;
 
     public int StartingFriendlyCount { get; private set; }
     public bool HasFriendlyDied { get; private set; }

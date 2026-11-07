@@ -242,6 +242,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LightManager
   aiGameManager: {fileID: 1108885929}
+  startColor: {r: 1, g: 0.9415095, b: 0.9415095, a: 1}
+  endColor: {r: 1, g: 0.95723087, b: 0, a: 1}
 --- !u!58 &68552772
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -524,6 +526,7 @@ MonoBehaviour:
   minEnemySpawnDistanceFromFriendly: 3
   friendlyColor: {r: 0, g: 1, b: 0, a: 1}
   enemyColor: {r: 1, g: 0, b: 0, a: 1}
+  lightManager: {fileID: 0}
 --- !u!4 &1108885930
 Transform:
   m_ObjectHideFlags: 0
@@ -551,6 +554,22 @@ PrefabInstance:
       propertyPath: lightManager
       value: 
       objectReference: {fileID: 68552771}
+    - target: {fileID: 2771068951452293779, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}
+      propertyPath: upgradeTypeToDisplayName.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2771068951452293779, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}
+      propertyPath: upgradeTypeToDisplayName.Array.data[4].key
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2771068951452293779, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}
+      propertyPath: upgradeTypeToDisplayName.Array.data[2].value
+      value: Area
+      objectReference: {fileID: 0}
+    - target: {fileID: 2771068951452293779, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}
+      propertyPath: upgradeTypeToDisplayName.Array.data[3].value
+      value: Speed
+      objectReference: {fileID: 0}
     - target: {fileID: 4510233523560634201, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}
       propertyPath: m_Pivot.x
       value: 0

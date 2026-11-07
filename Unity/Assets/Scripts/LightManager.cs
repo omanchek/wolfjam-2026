@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using NUnit.Framework.Internal;
+using System.ComponentModel;
 
 public class LightManager : MonoBehaviour
 {
@@ -11,6 +12,14 @@ public class LightManager : MonoBehaviour
     private List<GameObject> listTest = new List<GameObject>();
     [SerializeField] AIGameManager aiGameManager;
     PlayerActions playerActions;
+
+    [Header("Stats")]
+    [SerializeField] Color startColor = Color.white;
+    [SerializeField] Color endColor = Color.red;
+    private float intensityUpgradeVal = 0;
+    private float maxIntensity = 3.0f;
+    private float movementSpeed = 0.005f;
+    public float GetIntensityUpgradeVal => intensityUpgradeVal;
 
     private void Awake()
     {
@@ -50,7 +59,7 @@ public class LightManager : MonoBehaviour
         mousePos = Pointer.current.position.ReadValue();
         mousePos.z = 10; // <-- NOTE: THIS VALUE NEEDS TO BE SET BASED ON HOW ZOOMED OUT THE CAMERA IS
         Vector2 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
-        transform.position = worldPos;
+        transform.position = Vector2.Lerp(transform.position, worldPos, movementSpeed);
     }
 
     private void UpdateLightState()
@@ -61,9 +70,7 @@ public class LightManager : MonoBehaviour
 
     public void IncreaseRadius(InputAction.CallbackContext context)
     {
-        // Increases the size of the light obj
-        this.gameObject.transform.localScale += new Vector3(0.5f, 0.5f, 0.0f);
-    }
+        intensityUpgradeVal += 0.3f;    }
 
     public void IncreaseRadiusV3(Vector3 increaseAmount)
     {
@@ -84,6 +91,17 @@ public class LightManager : MonoBehaviour
     {
         // Decreases the size of the light obj
         this.gameObject.transform.localScale -= new Vector3(0.5f, 0.5f, 0.0f);
+    }
+
+    public void IncreaseIntensity(float increaseAmount)
+    {
+        intensityUpgradeVal += increaseAmount;
+        //GetComponentInChildren<SpriteRenderer>().color = Color.Lerp(startColor, endColor, (intensityUpgradeVal / maxIntensity));
+    }
+
+    public void IncreaseMovementSpeed(float increaseAmount)
+    {
+        movementSpeed += increaseAmount;
     }
 
     // DOES NOT WORK, NOT SURE WHY
