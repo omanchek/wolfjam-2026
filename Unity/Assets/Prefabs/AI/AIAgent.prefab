@@ -256,3 +256,4 @@ MonoBehaviour:
   role: 0
   isSeen: 0
   state: 0
+  exclamation: {fileID: 1275276709758340108}
