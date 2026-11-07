@@ -56,9 +56,23 @@ public class GlobalData : MonoBehaviour
 
     //DATA FUNCTIONS
     public int GetLightScore() { return lightScore; }
-    public void DecrementLightScore(int amount) { lightScore -= amount; onLightScoreUpdated.Invoke(lightScore);  }
-    public void IncrementLightScore(int amount) { lightScore += amount; onLightScoreUpdated.Invoke(lightScore); }
-    public void SetLightScore(int score) { lightScore = score; onLightScoreUpdated.Invoke(lightScore); }
+    public void DecrementLightScore(int amount)
+    {
+        lightScore -= amount;
+        if (onLightScoreUpdated != null) onLightScoreUpdated.Invoke(lightScore);
+    }
+
+    public void IncrementLightScore(int amount)
+    {
+        lightScore += amount;
+        if (onLightScoreUpdated != null) onLightScoreUpdated.Invoke(lightScore);
+    }
+
+    public void SetLightScore(int score)
+    {
+        lightScore = score;
+        if (onLightScoreUpdated != null) onLightScoreUpdated.Invoke(lightScore);
+    }
 
     //DATA VARS
     public OnLightScoreUpdated onLightScoreUpdated;
