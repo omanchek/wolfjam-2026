@@ -23,6 +23,9 @@ public class GameHUD : MonoBehaviour
     [SerializeField] float lightEffectMaxIntensity = 0.75f;
     [SerializeField] LightManager lightManager;
 
+    [Header("Pause")]
+    [SerializeField] GameObject pausePanel;
+
     [Header("Quota")]
     [SerializeField] TextMeshProUGUI quotaText;
 
@@ -221,6 +224,20 @@ public class GameHUD : MonoBehaviour
     private void OnTutorialTextUpdated(string text)
     {
         Debug.Log(text);
+    }
+
+    public void ToggleGamePaused(bool isPaused)
+    {
+        if (isPaused)
+        {
+            pausePanel.SetActive(true);
+            Time.timeScale = 0.0f;
+        }
+        else
+        {
+            pausePanel.SetActive(false);
+            Time.timeScale = 1.0f;
+        }
     }
 
     private void UpdateLightEffect()

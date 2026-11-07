@@ -57,6 +57,7 @@ public class GlobalData : MonoBehaviour
     public delegate void OnTutorialTextUpdated(string newText);
     public delegate void OnUpgradeChoiceFinished();
 
+
     //DATA FUNCTIONS
     public int GetLightScore() { return lightScore; }
     public SoundManager GetSoundManager() { return soundManager; }

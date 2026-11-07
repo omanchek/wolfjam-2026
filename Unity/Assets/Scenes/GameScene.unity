@@ -609,7 +609,7 @@ MonoBehaviour:
   friendlySpeed: 60
   enemySpeed: 60
   wanderSpeed: 30
-  wanderTurnInterval: 2
+  wanderTurnInterval: 0.5
   arrivalRadius: 22.5
   migrationDuration: 2
   friendlyRarities:
@@ -623,7 +623,7 @@ MonoBehaviour:
   attackRange: 15
   attackDuration: 2
   seenDestroyDuration: 2
-  enemySpawnInterval: 1.5
+  enemySpawnInterval: 0.5
   maxEnemies: 20
   minSpawnDistanceFromTarget: 60
   minEnemySpawnDistanceFromFriendly: 90
@@ -783,11 +783,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   totalRounds: 5
-  friendliesPerRound: 8
+  friendliesPerRound: 20
   cameraTransitionDuration: 2
   cameraSizePerAreaUpgrade: 100
   background: {fileID: 1061171553}
-  roundQuotas: 040000000500000006000000i
+  roundQuotas: 1e0000002800000032000000i
 --- !u!4 &1165026544
 Transform:
   m_ObjectHideFlags: 0
