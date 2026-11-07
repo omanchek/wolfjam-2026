@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class UpgradeSet : MonoBehaviour
 {
     public enum UpgradeTypes
     { 
-        UP_None = 0,
-        UP_Intensity = 1,
-        UP_Range = 2,
-        UP_Area = 3,
-        UP_Speed = 4
+        UP_None = 0, // Does nothing
+        UP_Intensity = 1, // Decreases time to scare predator
+        UP_Range = 2, // Increases how far the lighthouse can go from the lighthouse
+        UP_Area = 3, // Increase area of the light
+        UP_Speed = 4 // Increase movement speed
     }
 
     [Serializable]
@@ -45,5 +46,12 @@ public class UpgradeSet : MonoBehaviour
         }
 
         return typeUpgrades;
+    }
+
+    public UpgradeContainer GetUpgradeSpecific(UpgradeTypes type)
+    {
+        var listOfUpgrades = GetUpgradesByType(type);
+        int index = UnityEngine.Random.Range(0, listOfUpgrades.Count);
+        return listOfUpgrades[index];
     }
 }
