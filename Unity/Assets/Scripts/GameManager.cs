@@ -6,7 +6,6 @@ using UnityEngine;
 public enum GamePhase
 {
     Playing,
-    CameraTransition,
     WaitingForUpgrade,
     GameOver
 }
@@ -18,12 +17,15 @@ public class GameManager : MonoBehaviour
 
     [SerializeField, Min(1)] private int totalRounds = 5;
     [SerializeField, Min(0)] private int friendliesPerRound = 8;
-    [SerializeField] private List<float> cameraSizes = new List<float> { 150f, 210f, 300f }; // One per round, the last repeats
     [SerializeField, Min(0f)] private float cameraTransitionDuration = 2f;
+    [SerializeField, Min(0f)] private float cameraSizePerAreaUpgrade = 100f; // Added per point of upgrade value
+    [SerializeField] private SpriteRenderer background; // The camera never shows past this
     [SerializeField] private List<int> roundQuotas = new List<int> { 4, 5, 6 }; // One per round, the last repeats
 
     private GlobalData globalData;
     private Tween cameraTween;
+    private float startCameraSize;
+    private Vector3 startCameraPosition;
 
     public int TotalRounds => totalRounds;
     public int RoundNumber { get; private set; }
@@ -44,14 +46,7 @@ public class GameManager : MonoBehaviour
 
     public void StartNewRound()
     {
-        cameraTween?.Kill();
         RoundNumber++;
-
-        if (cameraSizes.Count > 0)
-        {
-            Camera.main.orthographicSize = GetCameraSizeForRound(RoundNumber);
-        }
-
         Phase = GamePhase.Playing;
         CurrentQuota = roundQuotas.Count > 0 ? roundQuotas[Mathf.Min(RoundNumber - 1, roundQuotas.Count - 1)] : 0;
         QuotaProgress = 0;
@@ -59,9 +54,39 @@ public class GameManager : MonoBehaviour
         AIGameManager.Instance.StartRound(friendliesPerRound);
     }
 
+    public void ApplyAreaUpgrade(float upgradeValue)
+    {
+        IncreaseCameraSize(upgradeValue * cameraSizePerAreaUpgrade);
+    }
+
+    // Finishes any zoom still running so repeat calls add up
+    public void IncreaseCameraSize(float amount)
+    {
+        cameraTween?.Complete();
+        Camera camera = Camera.main;
+        float newSize = camera.orthographicSize + amount;
+        Vector3 newPosition = camera.transform.position;
+
+        if (background != null)
+        {
+            // The camera drifts to the background's center, so the view fills the image exactly at max size
+            Bounds bounds = background.bounds;
+            float maxSize = Mathf.Min(bounds.extents.y, bounds.extents.x / camera.aspect);
+            newSize = Mathf.Min(newSize, maxSize);
+            Vector3 maxPosition = new Vector3(bounds.center.x, bounds.center.y, startCameraPosition.z);
+            newPosition = Vector3.Lerp(startCameraPosition, maxPosition, Mathf.InverseLerp(startCameraSize, maxSize, newSize));
+        }
+
+        cameraTween = DOTween.Sequence()
+            .Join(camera.DOOrthoSize(newSize, cameraTransitionDuration))
+            .Join(camera.transform.DOMove(newPosition, cameraTransitionDuration));
+    }
+
     private void Awake()
     {
         Instance = this;
+        startCameraSize = Camera.main.orthographicSize;
+        startCameraPosition = Camera.main.transform.position;
     }
 
     private void Start()
@@ -110,13 +135,6 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        Phase = GamePhase.CameraTransition;
-        float size = cameraSizes.Count > 0 ? GetCameraSizeForRound(RoundNumber + 1) : Camera.main.orthographicSize;
-        cameraTween = Camera.main.DOOrthoSize(size, cameraTransitionDuration).OnComplete(RequestUpgradeChoice);
-    }
-
-    private void RequestUpgradeChoice()
-    {
         Phase = GamePhase.WaitingForUpgrade;
         UpgradeChoiceRequested?.Invoke();
     }
@@ -127,10 +145,5 @@ public class GameManager : MonoBehaviour
         {
             StartNewRound();
         }
-    }
-
-    private float GetCameraSizeForRound(int round)
-    {
-        return cameraSizes[Mathf.Min(round - 1, cameraSizes.Count - 1)];
     }
 }

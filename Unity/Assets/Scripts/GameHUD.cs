@@ -46,7 +46,6 @@ public class GameHUD : MonoBehaviour
 
     UpgradeSet.UpgradeContainer speedUpgrade1;
     UpgradeSet.UpgradeContainer speedUpgrade2;
-    UpgradeSet.UpgradeContainer speedUpgrade3;
 
     UpgradeSet.UpgradeContainer intensityUpgrade1;
     UpgradeSet.UpgradeContainer intensityUpgrade2;
@@ -106,7 +105,6 @@ public class GameHUD : MonoBehaviour
     {
         speedUpgrade1 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Speed, 0.005f);
         speedUpgrade2 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Speed, 0.01f);
-        //speedUpgrade3 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Speed, 0.02f);
 
         intensityUpgrade1 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Intensity, 0.1f);
         intensityUpgrade2 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Intensity, 0.2f);
@@ -116,17 +114,16 @@ public class GameHUD : MonoBehaviour
         areaUpgrade2 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Area, 0.75f);
         areaUpgrade3 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Area, 1.0f);
 
-        upgradeSet.AddUpgrade(speedUpgrade1);
-        upgradeSet.AddUpgrade(speedUpgrade2);
-        upgradeSet.AddUpgrade(speedUpgrade3);
+        upgradeSet.AddUpgradeOption(speedUpgrade1);
+        upgradeSet.AddUpgradeOption(speedUpgrade2);
 
-        upgradeSet.AddUpgrade(intensityUpgrade1);
-        upgradeSet.AddUpgrade(intensityUpgrade2);
-        upgradeSet.AddUpgrade(intensityUpgrade3);
+        upgradeSet.AddUpgradeOption(intensityUpgrade1);
+        upgradeSet.AddUpgradeOption(intensityUpgrade2);
+        upgradeSet.AddUpgradeOption(intensityUpgrade3);
 
-        upgradeSet.AddUpgrade(areaUpgrade1);
-        upgradeSet.AddUpgrade(areaUpgrade2);
-        upgradeSet.AddUpgrade(areaUpgrade3);
+        upgradeSet.AddUpgradeOption(areaUpgrade1);
+        upgradeSet.AddUpgradeOption(areaUpgrade2);
+        upgradeSet.AddUpgradeOption(areaUpgrade3);
     }
 
     private void CloseUpgradesMenu()
@@ -142,8 +139,8 @@ public class GameHUD : MonoBehaviour
         int opt1 = Random.Range(1, typeCount);
         int opt2 = Random.Range(1, typeCount - 1);
 
-        //ensure no overlap
-        if (opt1 == opt2)
+        //ensure no overlap, with every pairing equally likely
+        if (opt2 >= opt1)
         {
             opt2++;
         }
@@ -212,6 +209,7 @@ public class GameHUD : MonoBehaviour
                 break;
             case UpgradeSet.UpgradeTypes.UP_Area:
                 lightManager.IncreaseRadiusF(upgrade.mValue);
+                GameManager.Instance.ApplyAreaUpgrade(upgrade.mValue);
                 break;
             case UpgradeSet.UpgradeTypes.UP_Speed:
                 lightManager.ApplySpeedUpgrade(upgrade.mValue);

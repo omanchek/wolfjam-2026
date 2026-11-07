@@ -1883,10 +1883,8 @@ MonoBehaviour:
   - key: 1
     value: Intensity
   - key: 2
-    value: Range
-  - key: 3
     value: Area
-  - key: 4
+  - key: 3
     value: Speed
   upgradeSet: {fileID: 8159102133854738991}
   gameOverPanel: {fileID: 5476529092358148448}

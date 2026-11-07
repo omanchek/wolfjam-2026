@@ -784,11 +784,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   totalRounds: 5
   friendliesPerRound: 8
-  cameraSizes:
-  - 150
-  - 275
-  - 400
   cameraTransitionDuration: 2
+  cameraSizePerAreaUpgrade: 100
+  background: {fileID: 1061171553}
   roundQuotas: 040000000500000006000000i
 --- !u!4 &1165026544
 Transform:
