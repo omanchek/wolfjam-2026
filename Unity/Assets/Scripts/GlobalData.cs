@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 /*
 
@@ -50,10 +51,17 @@ public class GlobalData : MonoBehaviour
         return CreateInstance(forceRecreate);
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    public delegate void OnLightScoreUpdated(int score);
+
     //DATA FUNCTIONS
-    public float GetTestFloat() { return testFloat; }
-    public void SetTestFloat(float val) { testFloat = val; }
+    public int GetLightScore() { return lightScore; }
+    public void DecrementLightScore(int amount) { lightScore -= amount; onLightScoreUpdated.Invoke(lightScore);  }
+    public void IncrementLightScore(int amount) { lightScore += amount; onLightScoreUpdated.Invoke(lightScore); }
+    public void SetLightScore(int score) { lightScore = score; onLightScoreUpdated.Invoke(lightScore); }
 
     //DATA VARS
-    [SerializeField] private float testFloat = 0.0f;
+    public OnLightScoreUpdated onLightScoreUpdated;
+
+    [SerializeField] private int lightScore = 0;
 }
