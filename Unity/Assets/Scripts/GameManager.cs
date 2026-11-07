@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<float> cameraSizes = new List<float> { 5f, 7f, 10f }; // One per round, the last repeats
     [SerializeField, Min(0f)] private float cameraTransitionDuration = 2f;
     [SerializeField] private List<int> roundQuotas = new List<int> { 4, 5, 6 }; // One per round, the last repeats
-    [SerializeField, Min(0)] private int quotaRewardPerFriendly = 1;
 
     private GlobalData globalData;
     private Tween cameraTween;
@@ -67,7 +66,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        AIGameManager.Instance.FriendlyReachedTarget += HandleFriendlyReachedTarget;
+        AIGameManager.Instance.FriendlyWorthCollected += HandleFriendlyWorthCollected;
         AIGameManager.Instance.AllFriendliesGone += HandleAllFriendliesGone;
         globalData = GlobalData.GetInstance();
         globalData.onUpgradeChoiceFinished += HandleUpgradeChoiceFinished;
@@ -81,7 +80,7 @@ public class GameManager : MonoBehaviour
 
         if (AIGameManager.Instance != null)
         {
-            AIGameManager.Instance.FriendlyReachedTarget -= HandleFriendlyReachedTarget;
+            AIGameManager.Instance.FriendlyWorthCollected -= HandleFriendlyWorthCollected;
             AIGameManager.Instance.AllFriendliesGone -= HandleAllFriendliesGone;
         }
 
@@ -91,10 +90,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void HandleFriendlyReachedTarget(int totalReached)
+    private void HandleFriendlyWorthCollected(int worth)
     {
-        QuotaProgress += quotaRewardPerFriendly;
-        globalData.IncrementLightScore(quotaRewardPerFriendly);
+        QuotaProgress += worth;
+        globalData.IncrementLightScore(worth);
     }
 
     private void HandleAllFriendliesGone()
