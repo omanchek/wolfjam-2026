@@ -145,7 +145,7 @@ public class AIAgent : MonoBehaviour
 
         if (Vector2.Distance(transform.position, manager.TargetPosition) <= manager.ArrivalRadius)
         {
-            manager.Despawn(this);
+            manager.ArriveFriendly(this);
         }
     }
 
@@ -166,7 +166,7 @@ public class AIAgent : MonoBehaviour
 
         if (attackTimer >= AIGameManager.Instance.AttackDuration)
         {
-            AIGameManager.Instance.Despawn(prey);
+            AIGameManager.Instance.KillFriendly(prey);
             prey = null;
         }
     }

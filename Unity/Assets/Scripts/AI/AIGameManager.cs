@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
+[DefaultExecutionOrder(-100)] // Instance must exist before subscribers run Awake or OnEnable
 public class AIGameManager : MonoBehaviour
 {
     private const int MaxSpawnAttempts = 20;
@@ -51,6 +54,28 @@ public class AIGameManager : MonoBehaviour
     public Vector2 TargetPosition => target.position;
     public Rect BoardRect => GetCameraRect();
 
+    public int StartingFriendlyCount => initialFriendlies;
+    public bool HasFriendlyDied { get; private set; }
+    public int FriendliesReachedTarget { get; private set; }
+
+    public event Action<int> FriendliesSpawned; // Passes the starting count
+    public event Action FriendlyDied;
+    public event Action<int> FriendlyReachedTarget; // Passes the total that have arrived so far
+
+    public void KillFriendly(AIAgent friendly)
+    {
+        HasFriendlyDied = true;
+        Despawn(friendly);
+        FriendlyDied?.Invoke();
+    }
+
+    public void ArriveFriendly(AIAgent friendly)
+    {
+        FriendliesReachedTarget++;
+        Despawn(friendly);
+        FriendlyReachedTarget?.Invoke(FriendliesReachedTarget);
+    }
+
     public void Despawn(AIAgent agent)
     {
         friendlies.Remove(agent);
@@ -89,6 +114,8 @@ public class AIGameManager : MonoBehaviour
         {
             friendlies.Add(SpawnAgent(AIRole.Friendly, friendlyColor));
         }
+
+        FriendliesSpawned?.Invoke(initialFriendlies);
     }
 
     private void Update()
