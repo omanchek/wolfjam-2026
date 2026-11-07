@@ -174,7 +174,7 @@ public class AIAgent : MonoBehaviour
 
         if (seenTimer >= AIGameManager.Instance.SeenDestroyDuration)
         {
-            AIGameManager.Instance.Despawn(this);
+            AIGameManager.Instance.KillEnemy(this);
         }
     }
 

@@ -28,10 +28,10 @@ public class AIGameManager : MonoBehaviour
     [SerializeField, Min(0f)] private float seenDestroyDuration = 2f;
 
     [Header("Spawning")]
-    [SerializeField, Min(0)] private int initialFriendlies = 8;
     [SerializeField, Min(0.01f)] private float enemySpawnInterval = 1.5f;
     [SerializeField, Min(0)] private int maxEnemies = 20;
     [SerializeField, Min(0f)] private float minSpawnDistanceFromTarget = 2f;
+    [SerializeField, Min(0f)] private float minEnemySpawnDistanceFromFriendly = 3f;
 
     [Header("Appearance")]
     [SerializeField] private Color friendlyColor = Color.green;
@@ -41,6 +41,7 @@ public class AIGameManager : MonoBehaviour
     private readonly List<AIAgent> enemies = new List<AIAgent>();
     private Camera mainCamera;
     private float spawnTimer;
+    private bool isRoundActive;
     private Vector2 seenZonePosition;
     private float seenZoneRadius;
 
@@ -56,13 +57,41 @@ public class AIGameManager : MonoBehaviour
     public Vector2 TargetPosition => target.position;
     public Rect BoardRect => GetCameraRect();
 
-    public int StartingFriendlyCount => initialFriendlies;
+    public int StartingFriendlyCount { get; private set; }
     public bool HasFriendlyDied { get; private set; }
     public int FriendliesReachedTarget { get; private set; }
 
     public event Action<int> FriendliesSpawned; // Passes the starting count
     public event Action FriendlyDied;
     public event Action<int> FriendlyReachedTarget; // Passes the total that have arrived so far
+    public event Action AllFriendliesReachedTarget; // Only fires if no friendly died this round
+    public event Action EnemyDestroyed;
+
+    // Clears the board, resets the round stats, and spawns on the camera's current view
+    public void StartRound(int friendlyCount)
+    {
+        DestroyAll(friendlies);
+        DestroyAll(enemies);
+
+        StartingFriendlyCount = Mathf.Max(0, friendlyCount);
+        HasFriendlyDied = false;
+        FriendliesReachedTarget = 0;
+        spawnTimer = 0f;
+        isRoundActive = true;
+
+        for (int i = 0; i < StartingFriendlyCount; i++)
+        {
+            friendlies.Add(SpawnAgent(AIRole.Friendly, friendlyColor, GetFriendlySpawnPosition()));
+        }
+
+        FriendliesSpawned?.Invoke(StartingFriendlyCount);
+    }
+
+    // Stops enemy spawning. Agents already on the board keep acting until the next StartRound.
+    public void StopRound()
+    {
+        isRoundActive = false;
+    }
 
     // A radius of 0 means nothing is seen
     public void SetSeenZone(Vector2 position, float radius)
@@ -88,9 +117,20 @@ public class AIGameManager : MonoBehaviour
         FriendliesReachedTarget++;
         Despawn(friendly);
         FriendlyReachedTarget?.Invoke(FriendliesReachedTarget);
+
+        if (!HasFriendlyDied && FriendliesReachedTarget == StartingFriendlyCount)
+        {
+            AllFriendliesReachedTarget?.Invoke();
+        }
     }
 
-    public void Despawn(AIAgent agent)
+    public void KillEnemy(AIAgent enemy)
+    {
+        Despawn(enemy);
+        EnemyDestroyed?.Invoke();
+    }
+
+    private void Despawn(AIAgent agent)
     {
         friendlies.Remove(agent);
         enemies.Remove(agent);
@@ -122,18 +162,13 @@ public class AIGameManager : MonoBehaviour
         mainCamera = Camera.main;
     }
 
-    private void Start()
-    {
-        for (int i = 0; i < initialFriendlies; i++)
-        {
-            friendlies.Add(SpawnAgent(AIRole.Friendly, friendlyColor));
-        }
-
-        FriendliesSpawned?.Invoke(initialFriendlies);
-    }
-
     private void Update()
     {
+        if (!isRoundActive)
+        {
+            return;
+        }
+
         spawnTimer += Time.deltaTime;
 
         if (spawnTimer < enemySpawnInterval)
@@ -143,28 +178,44 @@ public class AIGameManager : MonoBehaviour
 
         spawnTimer = 0f;
 
-        if (enemies.Count < maxEnemies)
+        if (enemies.Count < maxEnemies && TryGetEnemySpawnPosition(out Vector2 position))
         {
-            enemies.Add(SpawnAgent(AIRole.Enemy, enemyColor));
+            enemies.Add(SpawnAgent(AIRole.Enemy, enemyColor, position));
         }
     }
 
-    private AIAgent SpawnAgent(AIRole role, Color color)
+    private void DestroyAll(List<AIAgent> agents)
     {
-        AIAgent agent = Instantiate(agentPrefab, GetSpawnPosition(), Quaternion.identity, transform);
+        foreach (AIAgent agent in agents)
+        {
+            agent.gameObject.SetActive(false); // Destroy waits for end of frame, and this agent must not act until then
+            Destroy(agent.gameObject);
+        }
+
+        agents.Clear();
+    }
+
+    private AIAgent SpawnAgent(AIRole role, Color color, Vector2 position)
+    {
+        AIAgent agent = Instantiate(agentPrefab, position, Quaternion.identity, transform);
         agent.Initialize(role);
         agent.GetComponentInChildren<SpriteRenderer>().color = color;
         return agent;
     }
 
-    private Vector2 GetSpawnPosition()
+    private Vector2 GetRandomBoardPosition()
     {
         Rect area = GetCameraRect();
+        return new Vector2(Random.Range(area.xMin, area.xMax), Random.Range(area.yMin, area.yMax));
+    }
+
+    private Vector2 GetFriendlySpawnPosition()
+    {
         Vector2 position = Vector2.zero;
 
         for (int i = 0; i < MaxSpawnAttempts; i++)
         {
-            position = new Vector2(Random.Range(area.xMin, area.xMax), Random.Range(area.yMin, area.yMax));
+            position = GetRandomBoardPosition();
 
             if (Vector2.Distance(position, TargetPosition) >= minSpawnDistanceFromTarget)
             {
@@ -173,6 +224,46 @@ public class AIGameManager : MonoBehaviour
         }
 
         return position;
+    }
+
+    // Fails if no spot outside the seen zone turned up. Friendly distance is only a preference, so the farthest spot is used when none are clear.
+    private bool TryGetEnemySpawnPosition(out Vector2 position)
+    {
+        position = Vector2.zero;
+        bool found = false;
+        float bestDistance = -1f;
+
+        for (int i = 0; i < MaxSpawnAttempts; i++)
+        {
+            Vector2 candidate = GetRandomBoardPosition();
+
+            if (IsInSeenZone(candidate) || Vector2.Distance(candidate, TargetPosition) < minSpawnDistanceFromTarget)
+            {
+                continue;
+            }
+
+            float distance = GetDistanceToNearestFriendly(candidate);
+
+            if (distance > bestDistance)
+            {
+                position = candidate;
+                bestDistance = distance;
+                found = true;
+            }
+
+            if (distance >= minEnemySpawnDistanceFromFriendly)
+            {
+                break;
+            }
+        }
+
+        return found;
+    }
+
+    private float GetDistanceToNearestFriendly(Vector2 position)
+    {
+        AIAgent nearest = FindNearestFriendly(position, float.PositiveInfinity);
+        return nearest != null ? Vector2.Distance(position, nearest.transform.position) : float.PositiveInfinity;
     }
 
     private Rect GetCameraRect()
