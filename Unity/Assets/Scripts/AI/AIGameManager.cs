@@ -65,6 +65,7 @@ public class AIGameManager : MonoBehaviour
     public event Action FriendlyDied;
     public event Action<int> FriendlyReachedTarget; // Passes the total that have arrived so far
     public event Action AllFriendliesReachedTarget; // Only fires if no friendly died this round
+    public event Action AllFriendliesGone; // Fires when the last friendly has either arrived or died
     public event Action EnemyDestroyed;
 
     // Clears the board, resets the round stats, and spawns on the camera's current view
@@ -110,6 +111,7 @@ public class AIGameManager : MonoBehaviour
         HasFriendlyDied = true;
         Despawn(friendly);
         FriendlyDied?.Invoke();
+        NotifyIfAllFriendliesGone();
     }
 
     public void ArriveFriendly(AIAgent friendly)
@@ -122,12 +124,22 @@ public class AIGameManager : MonoBehaviour
         {
             AllFriendliesReachedTarget?.Invoke();
         }
+
+        NotifyIfAllFriendliesGone();
     }
 
     public void KillEnemy(AIAgent enemy)
     {
         Despawn(enemy);
         EnemyDestroyed?.Invoke();
+    }
+
+    private void NotifyIfAllFriendliesGone()
+    {
+        if (friendlies.Count == 0)
+        {
+            AllFriendliesGone?.Invoke();
+        }
     }
 
     private void Despawn(AIAgent agent)

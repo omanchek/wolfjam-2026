@@ -16,15 +16,21 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    [SerializeField, Min(1)] private int totalRounds = 5;
     [SerializeField, Min(0)] private int friendliesPerRound = 8;
     [SerializeField] private List<float> cameraSizes = new List<float> { 5f, 7f, 10f }; // One per round, the last repeats
     [SerializeField, Min(0f)] private float cameraTransitionDuration = 2f;
+    [SerializeField] private List<int> roundQuotas = new List<int> { 4, 5, 6 }; // One per round, the last repeats
+    [SerializeField, Min(0)] private int quotaRewardPerFriendly = 1;
 
     private GlobalData globalData;
     private Tween cameraTween;
 
     public int RoundNumber { get; private set; }
     public GamePhase Phase { get; private set; }
+    public int CurrentQuota { get; private set; }
+    public int QuotaProgress { get; private set; }
+    public bool ClearedAllRounds { get; private set; } // Tells a finished run apart from a missed quota at game over
 
     public int FriendliesPerRound
     {
@@ -34,6 +40,7 @@ public class GameManager : MonoBehaviour
 
     public event Action GameOver;
     public event Action UpgradeChoiceRequested; // The upgrade UI should open on this
+    public event Action<int, int> QuotaChanged; // Passes the progress, then the quota
 
     public void StartNewRound()
     {
@@ -46,6 +53,9 @@ public class GameManager : MonoBehaviour
         }
 
         Phase = GamePhase.Playing;
+        CurrentQuota = roundQuotas.Count > 0 ? roundQuotas[Mathf.Min(RoundNumber - 1, roundQuotas.Count - 1)] : 0;
+        QuotaProgress = 0;
+        QuotaChanged?.Invoke(QuotaProgress, CurrentQuota);
         AIGameManager.Instance.StartRound(friendliesPerRound);
     }
 
@@ -56,8 +66,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        AIGameManager.Instance.FriendlyDied += HandleFriendlyDied;
-        AIGameManager.Instance.AllFriendliesReachedTarget += HandleAllFriendliesReachedTarget;
+        AIGameManager.Instance.FriendlyReachedTarget += HandleFriendlyReachedTarget;
+        AIGameManager.Instance.AllFriendliesGone += HandleAllFriendliesGone;
         globalData = GlobalData.GetInstance();
         globalData.onUpgradeChoiceFinished += HandleUpgradeChoiceFinished;
         StartNewRound();
@@ -69,8 +79,8 @@ public class GameManager : MonoBehaviour
 
         if (AIGameManager.Instance != null)
         {
-            AIGameManager.Instance.FriendlyDied -= HandleFriendlyDied;
-            AIGameManager.Instance.AllFriendliesReachedTarget -= HandleAllFriendliesReachedTarget;
+            AIGameManager.Instance.FriendlyReachedTarget -= HandleFriendlyReachedTarget;
+            AIGameManager.Instance.AllFriendliesGone -= HandleAllFriendliesGone;
         }
 
         if (globalData != null)
@@ -79,22 +89,26 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void HandleFriendlyDied()
+    private void HandleFriendlyReachedTarget(int totalReached)
     {
-        if (Phase == GamePhase.GameOver)
+        QuotaProgress += quotaRewardPerFriendly;
+        QuotaChanged?.Invoke(QuotaProgress, CurrentQuota);
+    }
+
+    private void HandleAllFriendliesGone()
+    {
+        AIGameManager.Instance.StopRound();
+
+        bool quotaMet = QuotaProgress >= CurrentQuota;
+        ClearedAllRounds = quotaMet && RoundNumber >= totalRounds;
+
+        if (!quotaMet || ClearedAllRounds)
         {
+            Phase = GamePhase.GameOver;
+            GameOver?.Invoke();
             return;
         }
 
-        cameraTween?.Kill();
-        Phase = GamePhase.GameOver;
-        AIGameManager.Instance.StopRound();
-        GameOver?.Invoke();
-    }
-
-    private void HandleAllFriendliesReachedTarget()
-    {
-        AIGameManager.Instance.StopRound();
         Phase = GamePhase.CameraTransition;
         float size = cameraSizes.Count > 0 ? GetCameraSizeForRound(RoundNumber + 1) : Camera.main.orthographicSize;
         cameraTween = Camera.main.DOOrthoSize(size, cameraTransitionDuration).OnComplete(RequestUpgradeChoice);
