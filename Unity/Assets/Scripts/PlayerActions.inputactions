@@ -15,6 +15,26 @@
                     "interactions": "",
                     "initialStateCheck": true,
                     "priority": 0
+                },
+                {
+                    "name": "IncreaseRadius",
+                    "type": "Button",
+                    "id": "e40fbb42-2d17-49c9-b1fd-29ae5653a69e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "DecreaseRadius",
+                    "type": "Button",
+                    "id": "fb2df5c6-0a5f-408a-baa4-cc89525c8147",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -26,6 +46,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "MouseLocation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c87dc16d-1e38-4620-ae98-0c7691cfa26e",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "IncreaseRadius",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "db0a95c5-e772-418e-bb96-9d90b0dd898c",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DecreaseRadius",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

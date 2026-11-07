@@ -101,6 +101,26 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": true,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""IncreaseRadius"",
+                    ""type"": ""Button"",
+                    ""id"": ""e40fbb42-2d17-49c9-b1fd-29ae5653a69e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""DecreaseRadius"",
+                    ""type"": ""Button"",
+                    ""id"": ""fb2df5c6-0a5f-408a-baa4-cc89525c8147"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -114,6 +134,28 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""action"": ""MouseLocation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c87dc16d-1e38-4620-ae98-0c7691cfa26e"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""IncreaseRadius"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""db0a95c5-e772-418e-bb96-9d90b0dd898c"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DecreaseRadius"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -123,6 +165,8 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         // MouseActions
         m_MouseActions = asset.FindActionMap("MouseActions", throwIfNotFound: true);
         m_MouseActions_MouseLocation = m_MouseActions.FindAction("MouseLocation", throwIfNotFound: true);
+        m_MouseActions_IncreaseRadius = m_MouseActions.FindAction("IncreaseRadius", throwIfNotFound: true);
+        m_MouseActions_DecreaseRadius = m_MouseActions.FindAction("DecreaseRadius", throwIfNotFound: true);
     }
 
     ~@PlayerActions()
@@ -204,6 +248,8 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_MouseActions;
     private List<IMouseActionsActions> m_MouseActionsActionsCallbackInterfaces = new List<IMouseActionsActions>();
     private readonly InputAction m_MouseActions_MouseLocation;
+    private readonly InputAction m_MouseActions_IncreaseRadius;
+    private readonly InputAction m_MouseActions_DecreaseRadius;
     /// <summary>
     /// Provides access to input actions defined in input action map "MouseActions".
     /// </summary>
@@ -219,6 +265,14 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "MouseActions/MouseLocation".
         /// </summary>
         public InputAction @MouseLocation => m_Wrapper.m_MouseActions_MouseLocation;
+        /// <summary>
+        /// Provides access to the underlying input action "MouseActions/IncreaseRadius".
+        /// </summary>
+        public InputAction @IncreaseRadius => m_Wrapper.m_MouseActions_IncreaseRadius;
+        /// <summary>
+        /// Provides access to the underlying input action "MouseActions/DecreaseRadius".
+        /// </summary>
+        public InputAction @DecreaseRadius => m_Wrapper.m_MouseActions_DecreaseRadius;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -248,6 +302,12 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @MouseLocation.started += instance.OnMouseLocation;
             @MouseLocation.performed += instance.OnMouseLocation;
             @MouseLocation.canceled += instance.OnMouseLocation;
+            @IncreaseRadius.started += instance.OnIncreaseRadius;
+            @IncreaseRadius.performed += instance.OnIncreaseRadius;
+            @IncreaseRadius.canceled += instance.OnIncreaseRadius;
+            @DecreaseRadius.started += instance.OnDecreaseRadius;
+            @DecreaseRadius.performed += instance.OnDecreaseRadius;
+            @DecreaseRadius.canceled += instance.OnDecreaseRadius;
         }
 
         /// <summary>
@@ -262,6 +322,12 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @MouseLocation.started -= instance.OnMouseLocation;
             @MouseLocation.performed -= instance.OnMouseLocation;
             @MouseLocation.canceled -= instance.OnMouseLocation;
+            @IncreaseRadius.started -= instance.OnIncreaseRadius;
+            @IncreaseRadius.performed -= instance.OnIncreaseRadius;
+            @IncreaseRadius.canceled -= instance.OnIncreaseRadius;
+            @DecreaseRadius.started -= instance.OnDecreaseRadius;
+            @DecreaseRadius.performed -= instance.OnDecreaseRadius;
+            @DecreaseRadius.canceled -= instance.OnDecreaseRadius;
         }
 
         /// <summary>
@@ -309,5 +375,19 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMouseLocation(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "IncreaseRadius" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnIncreaseRadius(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "DecreaseRadius" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDecreaseRadius(InputAction.CallbackContext context);
     }
 }

@@ -9,7 +9,8 @@ public class UpgradeSet : MonoBehaviour
         UP_None = 0,
         UP_Intensity = 1,
         UP_Range = 2,
-        UP_Area = 3
+        UP_Area = 3,
+        UP_Speed = 4
     }
 
     [Serializable]
