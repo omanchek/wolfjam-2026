@@ -8,13 +8,11 @@ public class FriendlyRarity
 {
     public string name;
     [Min(0)] public int worth;
-    public Color color = Color.green;
 
-    public FriendlyRarity(string name, int worth, Color color)
+    public FriendlyRarity(string name, int worth)
     {
         this.name = name;
         this.worth = worth;
-        this.color = color;
     }
 }
 
@@ -32,36 +30,36 @@ public class AIGameManager : MonoBehaviour
     [SerializeField] private Transform target;
 
     [Header("Movement")]
-    [SerializeField, Min(0f)] private float friendlySpeed = 2f;
-    [SerializeField, Min(0f)] private float enemySpeed = 2f;
-    [SerializeField, Min(0f)] private float wanderSpeed = 1f;
+    [SerializeField, Min(0f)] private float friendlySpeed = 60f;
+    [SerializeField, Min(0f)] private float enemySpeed = 60f;
+    [SerializeField, Min(0f)] private float wanderSpeed = 30f;
     [SerializeField, Min(0.01f)] private float wanderTurnInterval = 2f;
-    [SerializeField, Min(0f)] private float arrivalRadius = 0.75f;
+    [SerializeField, Min(0f)] private float arrivalRadius = 22.5f;
     [SerializeField, Min(0f)] private float migrationDuration = 2f;
 
     [Header("Friendly Rarities")]
     [SerializeField] private List<FriendlyRarity> friendlyRarities = new List<FriendlyRarity>
     {
-        new FriendlyRarity("Common", 1, new Color(0.1f, 0.45f, 0.2f)),
-        new FriendlyRarity("Rare", 2, new Color(0.15f, 0.85f, 0.25f)),
-        new FriendlyRarity("Legendary", 5, new Color(0.7f, 1f, 0.55f))
+        new FriendlyRarity("Common", 1),
+        new FriendlyRarity("Rare", 2),
+        new FriendlyRarity("Legendary", 5)
     };
 
     [Header("Enemy Behavior")]
-    [SerializeField, Min(0f)] private float detectionRadius = 3f;
-    [SerializeField, Min(0f)] private float attackRange = 0.5f;
+    [SerializeField, Min(0f)] private float detectionRadius = 90f;
+    [SerializeField, Min(0f)] private float attackRange = 15f;
     [SerializeField, Min(0f)] private float attackDuration = 2f;
     [SerializeField, Min(0f)] private float seenDestroyDuration = 2f;
 
     [Header("Spawning")]
     [SerializeField, Min(0.01f)] private float enemySpawnInterval = 1.5f;
     [SerializeField, Min(0)] private int maxEnemies = 20;
-    [SerializeField, Min(0f)] private float minSpawnDistanceFromTarget = 2f;
-    [SerializeField, Min(0f)] private float minEnemySpawnDistanceFromFriendly = 3f;
+    [SerializeField, Min(0f)] private float minSpawnDistanceFromTarget = 60f;
+    [SerializeField, Min(0f)] private float minEnemySpawnDistanceFromFriendly = 90f;
 
     [Header("Appearance")]
-    [SerializeField] private Color friendlyColor = Color.green;
-    [SerializeField] private Color enemyColor = Color.red;
+    [SerializeField] private string friendlyAnimationState = "MothFlying";
+    [SerializeField] private List<string> enemyAnimationStates = new List<string> { "BatFlying", "HawkFlying", "OwlFlying" };
 
     private readonly List<AIAgent> friendlies = new List<AIAgent>();
     private readonly List<AIAgent> enemies = new List<AIAgent>();
@@ -113,9 +111,8 @@ public class AIGameManager : MonoBehaviour
 
         for (int i = 0; i < StartingFriendlyCount; i++)
         {
-            FriendlyRarity rarity = GetRandomRarity();
-            AIAgent friendly = SpawnAgent(AIRole.Friendly, rarity != null ? rarity.color : friendlyColor, GetFriendlySpawnPosition());
-            friendly.Initialize(AIRole.Friendly, rarity);
+            AIAgent friendly = Instantiate(agentPrefab, GetFriendlySpawnPosition(), Quaternion.identity, transform);
+            friendly.Initialize(AIRole.Friendly, friendlyAnimationState, GetRandomRarity());
             friendlies.Add(friendly);
         }
 
@@ -237,7 +234,9 @@ public class AIGameManager : MonoBehaviour
 
         if (enemies.Count < maxEnemies && TryGetEnemySpawnPosition(out Vector2 position))
         {
-            enemies.Add(SpawnAgent(AIRole.Enemy, enemyColor, position));
+            AIAgent enemy = Instantiate(agentPrefab, position, Quaternion.identity, transform);
+            enemy.Initialize(AIRole.Enemy, enemyAnimationStates[Random.Range(0, enemyAnimationStates.Count)]);
+            enemies.Add(enemy);
         }
     }
 
@@ -250,14 +249,6 @@ public class AIGameManager : MonoBehaviour
         }
 
         agents.Clear();
-    }
-
-    private AIAgent SpawnAgent(AIRole role, Color color, Vector2 position)
-    {
-        AIAgent agent = Instantiate(agentPrefab, position, Quaternion.identity, transform);
-        agent.Initialize(role);
-        agent.GetComponentInChildren<SpriteRenderer>().color = color;
-        return agent;
     }
 
     private FriendlyRarity GetRandomRarity()
@@ -359,7 +350,7 @@ public class AIGameManager : MonoBehaviour
             return;
         }
 
-        Gizmos.color = friendlyColor; // Seen friendlies despawn inside this radius
+        Gizmos.color = Color.green; // Seen friendlies despawn inside this radius
         Gizmos.DrawWireSphere(target.position, arrivalRadius);
         Gizmos.color = Color.yellow; // Agents don't spawn inside this radius
         Gizmos.DrawWireSphere(target.position, minSpawnDistanceFromTarget);

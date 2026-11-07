@@ -40,14 +40,16 @@ public class GameHUD : MonoBehaviour
     [SerializeField] private string mainMenuSceneName = "MainMenu";
 
     //members
+    GlobalData globalData;
     float lightEffectTimer = 0.0f;
     UpgradeSet.UpgradeContainer upgrade1;
     UpgradeSet.UpgradeContainer upgrade2;
 
     private void Awake()
     {
-        GlobalData.GetInstance().onLightScoreUpdated += OnLightScoreUpdated;
-        GlobalData.GetInstance().onTutorialTextUpdated += OnTutorialTextUpdated;
+        globalData = GlobalData.GetInstance();
+        globalData.onLightScoreUpdated += OnLightScoreUpdated;
+        globalData.onTutorialTextUpdated += OnTutorialTextUpdated;
 
         upgradePanel.SetActive(false);
         gameOverPanel.SetActive(false);
@@ -64,8 +66,12 @@ public class GameHUD : MonoBehaviour
 
     private void OnDestroy()
     {
-        GlobalData.GetInstance().onLightScoreUpdated -= OnLightScoreUpdated;
-        GlobalData.GetInstance().onTutorialTextUpdated -= OnTutorialTextUpdated;
+        // GetInstance would create a new object here if GlobalData was already destroyed on quit
+        if (globalData != null)
+        {
+            globalData.onLightScoreUpdated -= OnLightScoreUpdated;
+            globalData.onTutorialTextUpdated -= OnTutorialTextUpdated;
+        }
 
         if (GameManager.Instance != null)
         {

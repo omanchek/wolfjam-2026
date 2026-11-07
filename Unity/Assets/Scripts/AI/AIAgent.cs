@@ -22,6 +22,7 @@ public class AIAgent : MonoBehaviour
     [SerializeField] private bool isSeen;
     [SerializeField] private AIState state;
 
+    private Animator animator;
     private SpriteRenderer spriteRenderer;
     private AIAgent prey;
     private Vector2 wanderDirection;
@@ -36,14 +37,16 @@ public class AIAgent : MonoBehaviour
 
     public bool IsSeen => isSeen;
 
-    public void Initialize(AIRole newRole, FriendlyRarity rarity = null)
+    public void Initialize(AIRole newRole, string animationState, FriendlyRarity rarity = null)
     {
         role = newRole;
         Rarity = rarity;
+        animator.Play(animationState, 0, Random.value); // A random start keeps the flock from flapping in sync
     }
 
     private void Awake()
     {
+        animator = GetComponentInChildren<Animator>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         spriteRenderer.enabled = false; // Stays hidden until its first seen check
     }

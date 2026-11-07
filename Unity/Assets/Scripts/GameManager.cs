@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField, Min(1)] private int totalRounds = 5;
     [SerializeField, Min(0)] private int friendliesPerRound = 8;
-    [SerializeField] private List<float> cameraSizes = new List<float> { 5f, 7f, 10f }; // One per round, the last repeats
+    [SerializeField] private List<float> cameraSizes = new List<float> { 150f, 210f, 300f }; // One per round, the last repeats
     [SerializeField, Min(0f)] private float cameraTransitionDuration = 2f;
     [SerializeField] private List<int> roundQuotas = new List<int> { 4, 5, 6 }; // One per round, the last repeats
 

@@ -4,8 +4,9 @@ using UnityEngine.InputSystem;
 public class LightManager : MonoBehaviour
 {
     [SerializeField] AIGameManager aiGameManager;
-    [SerializeField, Min(0f)] float moveSpeed = 15f;
-    [SerializeField, Min(0f)] float maxRangeFromTarget = 8f;
+    [SerializeField, Min(0f)] float moveSpeed = 450f;
+    [SerializeField, Min(0f)] float maxRangeFromTarget = 240f;
+    [SerializeField, Min(0f)] float radiusStep = 30f; // How much one point of area upgrade adds to the light's scale
 
     PlayerActions playerActions;
     CircleCollider2D lightCollider;
@@ -52,22 +53,22 @@ public class LightManager : MonoBehaviour
     private void IncreaseRadius(InputAction.CallbackContext context)
     {
         // Increases the size of the light obj
-        transform.localScale += new Vector3(0.5f, 0.5f, 0.0f);
+        IncreaseRadiusF(0.5f);
     }
 
     public void IncreaseRadiusF(float increaseAmount)
     {
         // Increase components (x && y) by a desired amount
         Vector3 localScale = transform.localScale;
-        localScale.x += increaseAmount;
-        localScale.y += increaseAmount;
+        localScale.x += increaseAmount * radiusStep;
+        localScale.y += increaseAmount * radiusStep;
         transform.localScale = localScale;
     }
 
     private void DecreaseRadius(InputAction.CallbackContext context)
     {
         // Decreases the size of the light obj
-        transform.localScale -= new Vector3(0.5f, 0.5f, 0.0f);
+        IncreaseRadiusF(-0.5f);
     }
 
     private void OnEnable()
