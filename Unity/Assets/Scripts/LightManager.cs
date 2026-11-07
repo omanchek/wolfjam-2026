@@ -8,8 +8,9 @@ using System.ComponentModel;
 public class LightManager : MonoBehaviour
 {
     [SerializeField] AIGameManager aiGameManager;
-    [SerializeField, Min(0f)] float moveSpeed = 15f;
-    [SerializeField, Min(0f)] float maxRangeFromTarget = 8f;
+    [SerializeField, Min(0f)] float moveSpeed = 450f;
+    [SerializeField, Min(0f)] float maxRangeFromTarget = 240f;
+    [SerializeField, Min(0f)] float radiusStep = 30f; // How much one point of area upgrade adds to the light's scale
 
     PlayerActions playerActions;
     CircleCollider2D lightCollider;
@@ -71,8 +72,8 @@ public class LightManager : MonoBehaviour
     {
         // Increase components (x && y) by a desired amount
         Vector3 localScale = transform.localScale;
-        localScale.x += increaseAmount;
-        localScale.y += increaseAmount;
+        localScale.x += increaseAmount * radiusStep;
+        localScale.y += increaseAmount * radiusStep;
         transform.localScale = localScale;
     }
 

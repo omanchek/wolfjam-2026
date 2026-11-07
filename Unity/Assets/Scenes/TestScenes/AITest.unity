@@ -180,7 +180,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 150
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -242,6 +242,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LightManager
   aiGameManager: {fileID: 1108885929}
+  moveSpeed: 13500
+  maxRangeFromTarget: 7200
+  radiusStep: 30
 --- !u!58 &68552772
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -288,7 +291,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 1}
+  m_LocalScale: {x: 150, y: 150, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -324,8 +327,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a663f466d9a5aaa4d8c2f247eac64b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SeenZoneOverlay
+  image: {fileID: 0}
   color: {r: 0, g: 0, b: 0, a: 0.74509805}
-  edgeSoftness: 1
+  edgeSoftness: 30
 --- !u!23 &826630260
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -429,21 +433,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AIGameManager
   agentPrefab: {fileID: 4658703625000939423, guid: fa1d50c8964ad7c41acd610831aa36e7, type: 3}
   target: {fileID: 1596838031}
-  friendlySpeed: 2
-  enemySpeed: 2
-  wanderSpeed: 1
+  friendlySpeed: 60
+  enemySpeed: 60
+  wanderSpeed: 30
   wanderTurnInterval: 2
-  arrivalRadius: 0.75
-  detectionRadius: 3
-  attackRange: 0.5
+  arrivalRadius: 22.5
+  migrationDuration: 2
+  friendlyRarities:
+  - name: Common
+    worth: 1
+    color: {r: 0.1, g: 0.45, b: 0.2, a: 1}
+  - name: Rare
+    worth: 2
+    color: {r: 0.15, g: 0.85, b: 0.25, a: 1}
+  - name: Legendary
+    worth: 5
+    color: {r: 0.7, g: 1, b: 0.55, a: 1}
+  detectionRadius: 90
+  attackRange: 15
   attackDuration: 2
   seenDestroyDuration: 2
   enemySpawnInterval: 1.5
   maxEnemies: 20
-  minSpawnDistanceFromTarget: 2
-  minEnemySpawnDistanceFromFriendly: 3
+  minSpawnDistanceFromTarget: 60
+  minEnemySpawnDistanceFromFriendly: 90
   friendlyColor: {r: 0, g: 1, b: 0, a: 1}
-  enemyColor: {r: 1, g: 0, b: 0, a: 1}
+  enemyColor: {r: 1, g: 1, b: 1, a: 1}
+  friendlyAnimationState: MothFlying
+  enemyAnimationStates:
+  - BatFlying
+  - HawkFlying
+  - OwlFlying
 --- !u!4 &1108885930
 Transform:
   m_ObjectHideFlags: 0
@@ -491,12 +511,11 @@ MonoBehaviour:
   totalRounds: 5
   friendliesPerRound: 8
   cameraSizes:
-  - 5
-  - 7
-  - 10
+  - 150
+  - 210
+  - 300
   cameraTransitionDuration: 2
   roundQuotas: 040000000500000006000000i
-  quotaRewardPerFriendly: 1
 --- !u!4 &1165026544
 Transform:
   m_ObjectHideFlags: 0
@@ -539,7 +558,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 60, y: 60, z: 60}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

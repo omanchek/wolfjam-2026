@@ -12,7 +12,8 @@ public enum AIState
     Advancing,
     Chasing,
     Attacking,
-    Frozen
+    Frozen,
+    Gathering
 }
 
 public class AIAgent : MonoBehaviour
@@ -21,25 +22,31 @@ public class AIAgent : MonoBehaviour
     [SerializeField] private bool isSeen;
     [SerializeField] private AIState state;
 
+    private Animator animator;
     private SpriteRenderer spriteRenderer;
     private AIAgent prey;
     private Vector2 wanderDirection;
     private float wanderTimer;
     private float seenTimer;
     private float attackTimer;
+    private float migrationTimer;
 
     public AIRole Role => role;
     public AIState State => state;
+    public FriendlyRarity Rarity { get; private set; }
 
     public bool IsSeen => isSeen;
 
-    public void Initialize(AIRole newRole)
+    public void Initialize(AIRole newRole, string animationState, FriendlyRarity rarity = null)
     {
         role = newRole;
+        Rarity = rarity;
+        animator.Play(animationState, 0, Random.value); // A random start keeps the flock from flapping in sync
     }
 
     private void Awake()
     {
+        animator = GetComponentInChildren<Animator>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         spriteRenderer.enabled = false; // Stays hidden until its first seen check
     }
@@ -48,6 +55,7 @@ public class AIAgent : MonoBehaviour
     {
         isSeen = AIGameManager.Instance.IsInSeenZone(transform.position);
         spriteRenderer.enabled = isSeen;
+        migrationTimer = isSeen ? AIGameManager.Instance.MigrationDuration : migrationTimer - Time.deltaTime;
         UpdatePrey();
         state = GetNextState();
 
@@ -78,6 +86,9 @@ public class AIAgent : MonoBehaviour
             case AIState.Frozen:
                 UpdateFrozen();
                 break;
+            case AIState.Gathering:
+                UpdateGathering();
+                break;
         }
     }
 
@@ -104,7 +115,12 @@ public class AIAgent : MonoBehaviour
     {
         if (role == AIRole.Friendly)
         {
-            return isSeen ? AIState.Advancing : AIState.Wandering;
+            if (isSeen || migrationTimer > 0f)
+            {
+                return AIState.Advancing;
+            }
+
+            return AIGameManager.Instance.IsInGatherZone(transform.position) ? AIState.Wandering : AIState.Gathering;
         }
 
         if (isSeen)
@@ -126,12 +142,13 @@ public class AIAgent : MonoBehaviour
         AIGameManager manager = AIGameManager.Instance;
         Vector2 position = transform.position;
         Vector2 nextPosition = position + wanderDirection * (manager.WanderSpeed * Time.deltaTime);
+        bool staysInBounds = role == AIRole.Friendly ? manager.IsInGatherZone(nextPosition) : manager.BoardRect.Contains(nextPosition);
         wanderTimer -= Time.deltaTime;
 
-        if (!manager.BoardRect.Contains(nextPosition))
+        if (!staysInBounds)
         {
             Vector2 toCenter = manager.BoardRect.center - position;
-            wanderDirection = Quaternion.Euler(0f, 0f, Random.Range(-45f, 45f)) * toCenter.normalized; // Turn back onto the board
+            wanderDirection = Quaternion.Euler(0f, 0f, Random.Range(-45f, 45f)) * toCenter.normalized; // Turn back inside the bounds
             wanderTimer = manager.WanderTurnInterval;
         }
         else if (wanderTimer <= 0f)
@@ -152,6 +169,12 @@ public class AIAgent : MonoBehaviour
         {
             manager.ArriveFriendly(this);
         }
+    }
+
+    private void UpdateGathering()
+    {
+        AIGameManager manager = AIGameManager.Instance;
+        Move(manager.TargetPosition - (Vector2)transform.position, manager.WanderSpeed);
     }
 
     private void UpdateChasing()

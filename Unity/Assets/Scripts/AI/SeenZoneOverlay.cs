@@ -12,7 +12,7 @@ public class SeenZoneOverlay : MonoBehaviour
 
     [SerializeField] private Texture image; // Stretched over the camera view, and left empty for a solid color
     [SerializeField] private Color color = Color.black; // Tints the image, so use white to show it unchanged
-    [SerializeField, Min(0.001f)] private float edgeSoftness = 1f; // How far the fade reaches inward from the circle's edge
+    [SerializeField, Min(0.001f)] private float edgeSoftness = 30f; // How far the fade reaches inward from the circle's edge
 
     private MeshRenderer meshRenderer;
     private MaterialPropertyBlock properties;

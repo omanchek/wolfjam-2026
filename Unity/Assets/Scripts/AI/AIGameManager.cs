@@ -3,10 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[Serializable]
+public class FriendlyRarity
+{
+    public string name;
+    [Min(0)] public int worth;
+
+    public FriendlyRarity(string name, int worth)
+    {
+        this.name = name;
+        this.worth = worth;
+    }
+}
+
 [DefaultExecutionOrder(-100)] // Instance must exist before subscribers run Awake or OnEnable
 public class AIGameManager : MonoBehaviour
 {
     private const int MaxSpawnAttempts = 20;
+    private const int DefaultFriendlyWorth = 1; // Used when the rarity list is empty
+    private const float GatherRadiusToScreenHeight = 4f / 9f; // Matches half the screen's width across at 16:9
 
     public static AIGameManager Instance { get; private set; }
 
@@ -15,27 +30,36 @@ public class AIGameManager : MonoBehaviour
     [SerializeField] private Transform target;
 
     [Header("Movement")]
-    [SerializeField, Min(0f)] private float friendlySpeed = 2f;
-    [SerializeField, Min(0f)] private float enemySpeed = 2f;
-    [SerializeField, Min(0f)] private float wanderSpeed = 1f;
+    [SerializeField, Min(0f)] private float friendlySpeed = 60f;
+    [SerializeField, Min(0f)] private float enemySpeed = 60f;
+    [SerializeField, Min(0f)] private float wanderSpeed = 30f;
     [SerializeField, Min(0.01f)] private float wanderTurnInterval = 2f;
-    [SerializeField, Min(0f)] private float arrivalRadius = 0.75f;
+    [SerializeField, Min(0f)] private float arrivalRadius = 22.5f;
+    [SerializeField, Min(0f)] private float migrationDuration = 2f;
+
+    [Header("Friendly Rarities")]
+    [SerializeField] private List<FriendlyRarity> friendlyRarities = new List<FriendlyRarity>
+    {
+        new FriendlyRarity("Common", 1),
+        new FriendlyRarity("Rare", 2),
+        new FriendlyRarity("Legendary", 5)
+    };
 
     [Header("Enemy Behavior")]
-    [SerializeField, Min(0f)] private float detectionRadius = 3f;
-    [SerializeField, Min(0f)] private float attackRange = 0.5f;
+    [SerializeField, Min(0f)] private float detectionRadius = 90f;
+    [SerializeField, Min(0f)] private float attackRange = 15f;
     [SerializeField, Min(0f)] private float attackDuration = 2f;
     [SerializeField, Min(0f)] private float seenDestroyDuration = 2f;
 
     [Header("Spawning")]
     [SerializeField, Min(0.01f)] private float enemySpawnInterval = 1.5f;
     [SerializeField, Min(0)] private int maxEnemies = 20;
-    [SerializeField, Min(0f)] private float minSpawnDistanceFromTarget = 2f;
-    [SerializeField, Min(0f)] private float minEnemySpawnDistanceFromFriendly = 3f;
+    [SerializeField, Min(0f)] private float minSpawnDistanceFromTarget = 60f;
+    [SerializeField, Min(0f)] private float minEnemySpawnDistanceFromFriendly = 90f;
 
     [Header("Appearance")]
-    [SerializeField] private Color friendlyColor = Color.green;
-    [SerializeField] private Color enemyColor = Color.red;
+    [SerializeField] private string friendlyAnimationState = "MothFlying";
+    [SerializeField] private List<string> enemyAnimationStates = new List<string> { "BatFlying", "HawkFlying", "OwlFlying" };
 
     private readonly List<AIAgent> friendlies = new List<AIAgent>();
     private readonly List<AIAgent> enemies = new List<AIAgent>();
@@ -51,12 +75,14 @@ public class AIGameManager : MonoBehaviour
     public float WanderSpeed => wanderSpeed;
     public float WanderTurnInterval => wanderTurnInterval;
     public float ArrivalRadius => arrivalRadius;
+    public float MigrationDuration => migrationDuration;
     public float DetectionRadius => detectionRadius;
     public float AttackRange => attackRange;
     public float AttackDuration => attackDuration;
     public float SeenDestroyDuration => seenDestroyDuration;
     public Vector2 TargetPosition => target.position;
     public Rect BoardRect => GetCameraRect();
+    public float GatherRadius => GetCameraRect().height * GatherRadiusToScreenHeight;
     public Vector2 SeenZonePosition => seenZonePosition;
     public float SeenZoneRadius => seenZoneRadius;
     public LightManager GetLightManager => lightManager;
@@ -68,6 +94,7 @@ public class AIGameManager : MonoBehaviour
     public event Action<int> FriendliesSpawned; // Passes the starting count
     public event Action FriendlyDied;
     public event Action<int> FriendlyReachedTarget; // Passes the total that have arrived so far
+    public event Action<int> FriendlyWorthCollected; // Passes what the arriving friendly was worth
     public event Action AllFriendliesReachedTarget; // Only fires if no friendly died this round
     public event Action AllFriendliesGone; // Fires when the last friendly has either arrived or died
     public event Action EnemyDestroyed;
@@ -86,7 +113,9 @@ public class AIGameManager : MonoBehaviour
 
         for (int i = 0; i < StartingFriendlyCount; i++)
         {
-            friendlies.Add(SpawnAgent(AIRole.Friendly, friendlyColor, GetFriendlySpawnPosition()));
+            AIAgent friendly = Instantiate(agentPrefab, GetFriendlySpawnPosition(), Quaternion.identity, transform);
+            friendly.Initialize(AIRole.Friendly, friendlyAnimationState, GetRandomRarity());
+            friendlies.Add(friendly);
         }
 
         FriendliesSpawned?.Invoke(StartingFriendlyCount);
@@ -110,6 +139,11 @@ public class AIGameManager : MonoBehaviour
         return seenZoneRadius > 0f && Vector2.Distance(position, seenZonePosition) <= seenZoneRadius;
     }
 
+    public bool IsInGatherZone(Vector2 position)
+    {
+        return Vector2.Distance(position, BoardRect.center) <= GatherRadius;
+    }
+
     public void KillFriendly(AIAgent friendly)
     {
         HasFriendlyDied = true;
@@ -122,6 +156,7 @@ public class AIGameManager : MonoBehaviour
     {
         FriendliesReachedTarget++;
         Despawn(friendly);
+        FriendlyWorthCollected?.Invoke(friendly.Rarity != null ? friendly.Rarity.worth : DefaultFriendlyWorth);
         FriendlyReachedTarget?.Invoke(FriendliesReachedTarget);
 
         if (!HasFriendlyDied && FriendliesReachedTarget == StartingFriendlyCount)
@@ -201,7 +236,9 @@ public class AIGameManager : MonoBehaviour
 
         if (enemies.Count < maxEnemies && TryGetEnemySpawnPosition(out Vector2 position))
         {
-            enemies.Add(SpawnAgent(AIRole.Enemy, enemyColor, position));
+            AIAgent enemy = Instantiate(agentPrefab, position, Quaternion.identity, transform);
+            enemy.Initialize(AIRole.Enemy, enemyAnimationStates[Random.Range(0, enemyAnimationStates.Count)]);
+            enemies.Add(enemy);
         }
     }
 
@@ -216,12 +253,9 @@ public class AIGameManager : MonoBehaviour
         agents.Clear();
     }
 
-    private AIAgent SpawnAgent(AIRole role, Color color, Vector2 position)
+    private FriendlyRarity GetRandomRarity()
     {
-        AIAgent agent = Instantiate(agentPrefab, position, Quaternion.identity, transform);
-        agent.Initialize(role);
-        agent.GetComponentInChildren<SpriteRenderer>().color = color;
-        return agent;
+        return friendlyRarities.Count > 0 ? friendlyRarities[Random.Range(0, friendlyRarities.Count)] : null;
     }
 
     private Vector2 GetRandomBoardPosition()
@@ -307,8 +341,10 @@ public class AIGameManager : MonoBehaviour
         if (Camera.main != null)
         {
             Rect area = GetCameraRect();
-            Gizmos.color = Color.cyan; // The board: spawn area and wander bounds
+            Gizmos.color = Color.cyan; // The board: spawn area and enemy wander bounds
             Gizmos.DrawWireCube(area.center, area.size);
+            Gizmos.color = Color.blue; // Unseen friendlies gather and wander in here
+            Gizmos.DrawWireSphere(area.center, GatherRadius);
         }
 
         if (target == null)
@@ -316,7 +352,7 @@ public class AIGameManager : MonoBehaviour
             return;
         }
 
-        Gizmos.color = friendlyColor; // Seen friendlies despawn inside this radius
+        Gizmos.color = Color.green; // Seen friendlies despawn inside this radius
         Gizmos.DrawWireSphere(target.position, arrivalRadius);
         Gizmos.color = Color.yellow; // Agents don't spawn inside this radius
         Gizmos.DrawWireSphere(target.position, minSpawnDistanceFromTarget);
