@@ -44,6 +44,18 @@ public class GameHUD : MonoBehaviour
     UpgradeSet.UpgradeContainer upgrade1;
     UpgradeSet.UpgradeContainer upgrade2;
 
+    UpgradeSet.UpgradeContainer speedUpgrade1;
+    UpgradeSet.UpgradeContainer speedUpgrade2;
+    UpgradeSet.UpgradeContainer speedUpgrade3;
+
+    UpgradeSet.UpgradeContainer intensityUpgrade1;
+    UpgradeSet.UpgradeContainer intensityUpgrade2;
+    UpgradeSet.UpgradeContainer intensityUpgrade3;
+
+    UpgradeSet.UpgradeContainer areaUpgrade1;
+    UpgradeSet.UpgradeContainer areaUpgrade2;
+    UpgradeSet.UpgradeContainer areaUpgrade3;
+
     private void Awake()
     {
         GlobalData.GetInstance().onLightScoreUpdated += OnLightScoreUpdated;
@@ -87,13 +99,29 @@ public class GameHUD : MonoBehaviour
 
     private void AddUpgradeOptions()
     {
-        foreach (UpgradeSet.UpgradeTypes type in OfferedUpgradeTypes)
-        {
-            foreach (float value in UpgradeValues)
-            {
-                upgradeSet.AddUpgradeOption(new UpgradeSet.UpgradeContainer(type, value));
-            }
-        }
+        speedUpgrade1 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Speed, 0.005f);
+        speedUpgrade2 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Speed, 0.01f);
+        //speedUpgrade3 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Speed, 0.02f);
+
+        intensityUpgrade1 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Intensity, 0.1f);
+        intensityUpgrade2 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Intensity, 0.2f);
+        intensityUpgrade3 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Intensity, 0.3f);
+
+        areaUpgrade1 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Area, 0.50f);
+        areaUpgrade2 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Area, 0.75f);
+        areaUpgrade3 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Area, 1.0f);
+
+        upgradeSet.AddUpgrade(speedUpgrade1);
+        upgradeSet.AddUpgrade(speedUpgrade2);
+        upgradeSet.AddUpgrade(speedUpgrade3);
+
+        upgradeSet.AddUpgrade(intensityUpgrade1);
+        upgradeSet.AddUpgrade(intensityUpgrade2);
+        upgradeSet.AddUpgrade(intensityUpgrade3);
+
+        upgradeSet.AddUpgrade(areaUpgrade1);
+        upgradeSet.AddUpgrade(areaUpgrade2);
+        upgradeSet.AddUpgrade(areaUpgrade3);
     }
 
     private void CloseUpgradesMenu()
@@ -109,7 +137,8 @@ public class GameHUD : MonoBehaviour
         int opt1 = Random.Range(1, typeCount);
         int opt2 = Random.Range(1, typeCount - 1);
 
-        if (opt2 >= opt1)
+        //ensure no overlap
+        if (opt1 == opt2)
         {
             opt2++;
         }
@@ -117,7 +146,8 @@ public class GameHUD : MonoBehaviour
         //init buttons
         upgradeButton1.GetComponentInChildren<TextMeshProUGUI>().text = upgradeTypeToDisplayName[(UpgradeSet.UpgradeTypes)opt1];
         upgradeButton2.GetComponentInChildren<TextMeshProUGUI>().text = upgradeTypeToDisplayName[(UpgradeSet.UpgradeTypes)opt2];
-        upgrade1 = upgradeSet.GetUpgradeSpecific((UpgradeSet.UpgradeTypes)opt1);
+
+        upgrade1 = upgradeSet.GetUpgradeSpecific((UpgradeSet.UpgradeTypes)opt1);        
         upgrade2 = upgradeSet.GetUpgradeSpecific((UpgradeSet.UpgradeTypes)opt2);
 
         //activate upgrade panel

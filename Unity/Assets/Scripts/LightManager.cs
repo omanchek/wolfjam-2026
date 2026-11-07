@@ -1,5 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using NUnit.Framework.Internal;
+using System.ComponentModel;
 
 public class LightManager : MonoBehaviour
 {
@@ -9,6 +13,14 @@ public class LightManager : MonoBehaviour
 
     PlayerActions playerActions;
     CircleCollider2D lightCollider;
+
+    [Header("Stats")]
+    [SerializeField] Color startColor = Color.white;
+    [SerializeField] Color endColor = Color.red;
+    private float intensityUpgradeVal = 0;
+    private float maxIntensity = 3.0f;
+    private float movementSpeed = 0.005f;
+    public float GetIntensityUpgradeVal => intensityUpgradeVal;
 
     private void Awake()
     {
@@ -53,7 +65,7 @@ public class LightManager : MonoBehaviour
     {
         // Increases the size of the light obj
         transform.localScale += new Vector3(0.5f, 0.5f, 0.0f);
-    }
+	}
 
     public void IncreaseRadiusF(float increaseAmount)
     {
@@ -68,6 +80,27 @@ public class LightManager : MonoBehaviour
     {
         // Decreases the size of the light obj
         transform.localScale -= new Vector3(0.5f, 0.5f, 0.0f);
+	}
+
+    public void IncreaseIntensity(float increaseAmount)
+    {
+        intensityUpgradeVal += increaseAmount;
+        //GetComponentInChildren<SpriteRenderer>().color = Color.Lerp(startColor, endColor, (intensityUpgradeVal / maxIntensity));
+    }
+
+    public void IncreaseMovementSpeed(float increaseAmount)
+    {
+        movementSpeed += increaseAmount;
+    }
+
+    // DOES NOT WORK, NOT SURE WHY
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("Collision Entered");
+        if (collision.gameObject.tag == "AI")
+        {
+            Debug.Log(collision.gameObject.name);
+        }
     }
 
     private void OnEnable()

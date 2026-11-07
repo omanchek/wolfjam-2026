@@ -178,7 +178,7 @@ public class AIAgent : MonoBehaviour
 
     private void UpdateFrozen()
     {
-        seenTimer += Time.deltaTime;
+        seenTimer += (Time.deltaTime + AIGameManager.Instance.GetLightManager.GetIntensityUpgradeVal);
 
         if (seenTimer >= AIGameManager.Instance.SeenDestroyDuration)
         {

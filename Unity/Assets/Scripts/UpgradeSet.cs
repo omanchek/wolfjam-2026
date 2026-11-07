@@ -9,9 +9,8 @@ public class UpgradeSet : MonoBehaviour
     { 
         UP_None = 0, // Does nothing
         UP_Intensity = 1, // Decreases time to scare predator
-        UP_Range = 2, // Increases how far the lighthouse can go from the lighthouse
-        UP_Area = 3, // Increase area of the light
-        UP_Speed = 4 // Increase movement speed
+        UP_Area = 2, // Increase area of the light
+        UP_Speed = 3 // Increase movement speed
     }
 
     [Serializable]
