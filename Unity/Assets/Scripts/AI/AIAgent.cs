@@ -30,11 +30,7 @@ public class AIAgent : MonoBehaviour
     public AIRole Role => role;
     public AIState State => state;
 
-    public bool IsSeen
-    {
-        get => isSeen;
-        set => isSeen = value;
-    }
+    public bool IsSeen => isSeen;
 
     public void Initialize(AIRole newRole)
     {
@@ -43,6 +39,7 @@ public class AIAgent : MonoBehaviour
 
     private void Update()
     {
+        isSeen = AIGameManager.Instance.IsInSeenZone(transform.position);
         UpdatePrey();
         state = GetNextState();
 

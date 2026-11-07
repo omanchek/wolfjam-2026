@@ -41,6 +41,8 @@ public class AIGameManager : MonoBehaviour
     private readonly List<AIAgent> enemies = new List<AIAgent>();
     private Camera mainCamera;
     private float spawnTimer;
+    private Vector2 seenZonePosition;
+    private float seenZoneRadius;
 
     public float FriendlySpeed => friendlySpeed;
     public float EnemySpeed => enemySpeed;
@@ -61,6 +63,18 @@ public class AIGameManager : MonoBehaviour
     public event Action<int> FriendliesSpawned; // Passes the starting count
     public event Action FriendlyDied;
     public event Action<int> FriendlyReachedTarget; // Passes the total that have arrived so far
+
+    // A radius of 0 means nothing is seen
+    public void SetSeenZone(Vector2 position, float radius)
+    {
+        seenZonePosition = position;
+        seenZoneRadius = Mathf.Max(0f, radius);
+    }
+
+    public bool IsInSeenZone(Vector2 position)
+    {
+        return seenZoneRadius > 0f && Vector2.Distance(position, seenZonePosition) <= seenZoneRadius;
+    }
 
     public void KillFriendly(AIAgent friendly)
     {
@@ -172,6 +186,12 @@ public class AIGameManager : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (seenZoneRadius > 0f)
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireSphere(seenZonePosition, seenZoneRadius);
+        }
+
         if (Camera.main != null)
         {
             Rect area = GetCameraRect();
