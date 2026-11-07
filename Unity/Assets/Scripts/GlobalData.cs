@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 /*
 
@@ -50,10 +51,43 @@ public class GlobalData : MonoBehaviour
         return CreateInstance(forceRecreate);
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
+    public delegate void OnLightScoreUpdated(int score, bool isIncrease);
+    public delegate void OnTutorialStepUpdated(int newStep, TutorialTrigger trigger);
+    public delegate void OnTutorialTextUpdated(string newText);
+
     //DATA FUNCTIONS
-    public float GetTestFloat() { return testFloat; }
-    public void SetTestFloat(float val) { testFloat = val; }
+    public int GetLightScore() { return lightScore; }
+    public int GetTutorialStep() { return tutorialStep; }
+    public void DecrementLightScore(int amount)
+    {
+        lightScore -= amount;
+        if (onLightScoreUpdated != null) onLightScoreUpdated.Invoke(lightScore, amount < 0);
+    }
+
+    public void IncrementLightScore(int amount)
+    {
+        lightScore += amount;
+        if (onLightScoreUpdated != null) onLightScoreUpdated.Invoke(lightScore, amount >= 0);
+    }
+
+    public void SetLightScore(int score)
+    {
+        if (onLightScoreUpdated != null) onLightScoreUpdated.Invoke(score, score > lightScore);
+        lightScore = score;        
+    }
+
+    public void SetTutorialStep(int step, TutorialTrigger caller)
+    {
+        if (onTutorialStepUpdated != null) onTutorialStepUpdated.Invoke(tutorialStep, caller);
+        tutorialStep = step;        
+    }
 
     //DATA VARS
-    [SerializeField] private float testFloat = 0.0f;
+    public OnLightScoreUpdated onLightScoreUpdated;
+    public OnTutorialStepUpdated onTutorialStepUpdated;
+    public OnTutorialTextUpdated onTutorialTextUpdated;
+
+    [SerializeField] private int lightScore = 0;
+    [SerializeField] private int tutorialStep = 0;
 }
