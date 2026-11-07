@@ -23,12 +23,15 @@ public class SoundManager : MonoBehaviour
         {
             sourcePool.Add(gameObject.AddComponent<AudioSource>());
         }
+
+        //link to global data
+        GlobalData.GetInstance().SetSoundManager(this);
     }
 
     private void Start()
     {
-        PlaySoundByTypeAndID(SoundTypes.MUSIC, "danger_theme");
-        PlaySoundByTypeAndID(SoundTypes.SFX, "loot_sound");
+        //PlaySoundByTypeAndID(SoundTypes.MUSIC, "danger_theme");
+        //PlaySoundByTypeAndID(SoundTypes.SFX, "loot_sound");
     }
 
     public bool PlaySoundByTypeAndID(SoundTypes type, string id)

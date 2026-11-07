@@ -58,6 +58,7 @@ public class GlobalData : MonoBehaviour
 
     //DATA FUNCTIONS
     public int GetLightScore() { return lightScore; }
+    public SoundManager GetSoundManager() { return soundManager; }
     public int GetTutorialStep() { return tutorialStep; }
     public void DecrementLightScore(int amount)
     {
@@ -77,6 +78,11 @@ public class GlobalData : MonoBehaviour
         lightScore = score;        
     }
 
+    public void SetSoundManager(SoundManager sm)
+    {
+        soundManager = sm;
+    }
+
     public void SetTutorialStep(int step, TutorialTrigger caller)
     {
         if (onTutorialStepUpdated != null) onTutorialStepUpdated.Invoke(tutorialStep, caller);
@@ -90,4 +96,5 @@ public class GlobalData : MonoBehaviour
 
     [SerializeField] private int lightScore = 0;
     [SerializeField] private int tutorialStep = 0;
+    private SoundManager soundManager;
 }

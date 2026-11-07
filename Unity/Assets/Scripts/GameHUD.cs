@@ -26,6 +26,11 @@ public class GameHUD : MonoBehaviour
         GlobalData.GetInstance().onTutorialTextUpdated += OnTutorialTextUpdated;
     }
 
+    private void Start()
+    {
+        GlobalData.GetInstance().GetSoundManager().PlaySoundByTypeAndID(SoundManager.SoundTypes.SFX, "loot_sound");
+    }
+
     private void Update()
     {
         UpdateLightEffect();
