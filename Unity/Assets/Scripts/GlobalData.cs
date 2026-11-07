@@ -52,26 +52,26 @@ public class GlobalData : MonoBehaviour
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
-    public delegate void OnLightScoreUpdated(int score);
+    public delegate void OnLightScoreUpdated(int score, bool isIncrease);
 
     //DATA FUNCTIONS
     public int GetLightScore() { return lightScore; }
     public void DecrementLightScore(int amount)
     {
         lightScore -= amount;
-        if (onLightScoreUpdated != null) onLightScoreUpdated.Invoke(lightScore);
+        if (onLightScoreUpdated != null) onLightScoreUpdated.Invoke(lightScore, amount < 0);
     }
 
     public void IncrementLightScore(int amount)
     {
         lightScore += amount;
-        if (onLightScoreUpdated != null) onLightScoreUpdated.Invoke(lightScore);
+        if (onLightScoreUpdated != null) onLightScoreUpdated.Invoke(lightScore, amount >= 0);
     }
 
     public void SetLightScore(int score)
     {
-        lightScore = score;
-        if (onLightScoreUpdated != null) onLightScoreUpdated.Invoke(lightScore);
+        if (onLightScoreUpdated != null) onLightScoreUpdated.Invoke(score, score > lightScore);
+        lightScore = score;        
     }
 
     //DATA VARS
