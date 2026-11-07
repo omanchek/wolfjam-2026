@@ -245,6 +245,8 @@ MonoBehaviour:
   moveSpeed: 450
   maxRangeFromTarget: 240
   radiusStep: 30
+  startColor: {r: 1, g: 1, b: 1, a: 1}
+  endColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!58 &68552772
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -521,13 +523,10 @@ MonoBehaviour:
   friendlyRarities:
   - name: Common
     worth: 1
-    color: {r: 0.1, g: 0.45, b: 0.2, a: 1}
   - name: Rare
     worth: 2
-    color: {r: 0.15, g: 0.85, b: 0.25, a: 1}
   - name: Legendary
     worth: 5
-    color: {r: 0.7, g: 1, b: 0.55, a: 1}
   detectionRadius: 90
   attackRange: 15
   attackDuration: 2
@@ -536,13 +535,12 @@ MonoBehaviour:
   maxEnemies: 20
   minSpawnDistanceFromTarget: 60
   minEnemySpawnDistanceFromFriendly: 90
-  friendlyColor: {r: 0, g: 1, b: 0, a: 1}
-  enemyColor: {r: 1, g: 1, b: 1, a: 1}
   friendlyAnimationState: MothFlying
   enemyAnimationStates:
   - BatFlying
   - HawkFlying
   - OwlFlying
+  lightManager: {fileID: 68552771}
 --- !u!4 &1108885930
 Transform:
   m_ObjectHideFlags: 0

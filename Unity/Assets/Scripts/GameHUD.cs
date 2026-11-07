@@ -11,7 +11,6 @@ public class GameHUD : MonoBehaviour
         UpgradeSet.UpgradeTypes.UP_Speed,
         UpgradeSet.UpgradeTypes.UP_Intensity,
         UpgradeSet.UpgradeTypes.UP_Area,
-        UpgradeSet.UpgradeTypes.UP_Range
     };
     private static readonly float[] UpgradeValues = { 0.5f, 0.75f, 1.0f };
 
@@ -210,9 +209,6 @@ public class GameHUD : MonoBehaviour
         {
             case UpgradeSet.UpgradeTypes.UP_Intensity:
                 AIGameManager.Instance.ApplySeenDestroyUpgrade(upgrade.mValue);
-                break;
-            case UpgradeSet.UpgradeTypes.UP_Range:
-                lightManager.ApplyRangeUpgrade(upgrade.mValue);
                 break;
             case UpgradeSet.UpgradeTypes.UP_Area:
                 lightManager.IncreaseRadiusF(upgrade.mValue);
