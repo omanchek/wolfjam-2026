@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5ac695864906c418358fabcd83b24e, type: 3}
+  m_Name: DebugSoundLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::SoundLibrary
+  musicList:
+  - key: danger_theme
+    clip: {fileID: 8300000, guid: de4bbf40bd6de204481fd7d33d41652e, type: 3}
+    volume: 1
+    loop: 1
+  sfxList:
+  - key: loot_sound
+    clip: {fileID: 8300000, guid: 406029edd11c021449220f34da2a7ea4, type: 3}
+    volume: 1
+    loop: 0
+  - key: recharge_sound
+    clip: {fileID: 8300000, guid: 11a8536e419560a4995b815148e87517, type: 3}
+    volume: 1
+    loop: 0
