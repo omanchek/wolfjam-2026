@@ -22,7 +22,6 @@ public class GameHUD : MonoBehaviour
 
     [Header("Debug")]
     [SerializeField] UpgradeSet upgradeSet;
-    [SerializeField] RectTransform debugUpgradesTransform;
 
     //members
     float lightEffectTimer = 0.0f;
@@ -61,7 +60,6 @@ public class GameHUD : MonoBehaviour
     private void Update()
     {
         UpdateLightEffect();
-        DebugUpgradeDisplay();
     }
 
     private void BeginLightEffect()
@@ -102,37 +100,6 @@ public class GameHUD : MonoBehaviour
         upgradeSet.AddUpgrade(rangeUpgrade1);
         upgradeSet.AddUpgrade(rangeUpgrade2);
         upgradeSet.AddUpgrade(rangeUpgrade3);
-    }
-
-    public void DebugUpgradeDisplay()
-    {
-        //size upgrades
-        List<UpgradeSet.UpgradeContainer> sizeUpgrades = upgradeSet.GetUpgradesByType(UpgradeSet.UpgradeTypes.UP_Area);
-        float sizeScale = 1.0f;
-        for (int i = 0; i < sizeUpgrades.Count; i++)
-        {
-            sizeScale *= sizeUpgrades[i].mValue;
-        }
-        debugUpgradesTransform.localScale = new Vector3(sizeScale, sizeScale, sizeScale);
-
-        //speed upgrades
-        List<UpgradeSet.UpgradeContainer> speedUpgrades = upgradeSet.GetUpgradesByType(UpgradeSet.UpgradeTypes.UP_Speed);
-        float speedScale = 1.0f;
-        for (int i = 0; i < speedUpgrades.Count; i++) speedScale *= speedUpgrades[i].mValue;
-        debugUpgradesTransform.position = new Vector2(960 + 50.0f * Mathf.Cos(Time.time * speedScale), 540 + 50.0f * Mathf.Sin(Time.time * speedScale));
-
-        // Intensity upgrades
-        List<UpgradeSet.UpgradeContainer> intensityUpgrades = upgradeSet.GetUpgradesByType(UpgradeSet.UpgradeTypes.UP_Intensity);
-        float intensityScale = 1.0f;
-        for (int i = 0; i < intensityUpgrades.Count; i++)
-        {
-            intensityScale *= intensityUpgrades[i].mValue;
-            lightEffectColor = Random.ColorHSV();
-        }
-
-        List<UpgradeSet.UpgradeContainer> rangeUpgrades = upgradeSet.GetUpgradesByType(UpgradeSet.UpgradeTypes.UP_Range);
-        float rangeScale = 1.0f;
-        for (int i = 0; i < rangeUpgrades.Count; i++) rangeScale *= rangeUpgrades[i].mValue;
     }
 
     private void GenerateUpgrades()

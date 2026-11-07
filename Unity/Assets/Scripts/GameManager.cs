@@ -92,7 +92,8 @@ public class GameManager : MonoBehaviour
     private void HandleFriendlyReachedTarget(int totalReached)
     {
         QuotaProgress += quotaRewardPerFriendly;
-        QuotaChanged?.Invoke(QuotaProgress, CurrentQuota);
+        GlobalData.GetInstance().IncrementLightScore(1);
+        QuotaChanged?.Invoke(GlobalData.GetInstance().GetLightScore(), CurrentQuota);
     }
 
     private void HandleAllFriendliesGone()
