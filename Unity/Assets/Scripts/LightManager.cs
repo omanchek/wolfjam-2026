@@ -59,19 +59,19 @@ public class LightManager : MonoBehaviour
         aiGameManager.SetSeenZone(this.gameObject.transform.position, this.gameObject.GetComponent<CircleCollider2D>().radius * this.transform.localScale.x);
     }
 
-    private void IncreaseRadius(InputAction.CallbackContext context)
+    public void IncreaseRadius(InputAction.CallbackContext context)
     {
         // Increases the size of the light obj
         this.gameObject.transform.localScale += new Vector3(0.5f, 0.5f, 0.0f);
     }
 
-    private void IncreaseRadius(Vector3 increaseAmount)
+    public void IncreaseRadiusV3(Vector3 increaseAmount)
     {
         // Increase by a vector
         this.gameObject.transform.localScale += increaseAmount;
     }
 
-    private void IncreaseRadiusF(float increaseAmount)
+    public void IncreaseRadiusF(float increaseAmount)
     {
         // Increase components (x && y) by a desired amount
         Vector3 localScale = this.gameObject.transform.localScale;
