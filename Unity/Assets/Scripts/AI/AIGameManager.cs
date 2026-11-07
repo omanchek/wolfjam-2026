@@ -3,10 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[Serializable]
+public class FriendlyRarity
+{
+    public string name;
+    [Min(0)] public int worth;
+    public Color color = Color.green;
+
+    public FriendlyRarity(string name, int worth, Color color)
+    {
+        this.name = name;
+        this.worth = worth;
+        this.color = color;
+    }
+}
+
 [DefaultExecutionOrder(-100)] // Instance must exist before subscribers run Awake or OnEnable
 public class AIGameManager : MonoBehaviour
 {
     private const int MaxSpawnAttempts = 20;
+    private const int DefaultFriendlyWorth = 1; // Used when the rarity list is empty
+    private const float GatherRadiusToScreenHeight = 4f / 9f; // Matches half the screen's width across at 16:9
 
     public static AIGameManager Instance { get; private set; }
 
@@ -20,6 +37,15 @@ public class AIGameManager : MonoBehaviour
     [SerializeField, Min(0f)] private float wanderSpeed = 1f;
     [SerializeField, Min(0.01f)] private float wanderTurnInterval = 2f;
     [SerializeField, Min(0f)] private float arrivalRadius = 0.75f;
+    [SerializeField, Min(0f)] private float migrationDuration = 2f;
+
+    [Header("Friendly Rarities")]
+    [SerializeField] private List<FriendlyRarity> friendlyRarities = new List<FriendlyRarity>
+    {
+        new FriendlyRarity("Common", 1, new Color(0.1f, 0.45f, 0.2f)),
+        new FriendlyRarity("Rare", 2, new Color(0.15f, 0.85f, 0.25f)),
+        new FriendlyRarity("Legendary", 5, new Color(0.7f, 1f, 0.55f))
+    };
 
     [Header("Enemy Behavior")]
     [SerializeField, Min(0f)] private float detectionRadius = 3f;
@@ -50,12 +76,14 @@ public class AIGameManager : MonoBehaviour
     public float WanderSpeed => wanderSpeed;
     public float WanderTurnInterval => wanderTurnInterval;
     public float ArrivalRadius => arrivalRadius;
+    public float MigrationDuration => migrationDuration;
     public float DetectionRadius => detectionRadius;
     public float AttackRange => attackRange;
     public float AttackDuration => attackDuration;
     public float SeenDestroyDuration => seenDestroyDuration;
     public Vector2 TargetPosition => target.position;
     public Rect BoardRect => GetCameraRect();
+    public float GatherRadius => GetCameraRect().height * GatherRadiusToScreenHeight;
     public Vector2 SeenZonePosition => seenZonePosition;
     public float SeenZoneRadius => seenZoneRadius;
 
@@ -66,6 +94,7 @@ public class AIGameManager : MonoBehaviour
     public event Action<int> FriendliesSpawned; // Passes the starting count
     public event Action FriendlyDied;
     public event Action<int> FriendlyReachedTarget; // Passes the total that have arrived so far
+    public event Action<int> FriendlyWorthCollected; // Passes what the arriving friendly was worth
     public event Action AllFriendliesReachedTarget; // Only fires if no friendly died this round
     public event Action AllFriendliesGone; // Fires when the last friendly has either arrived or died
     public event Action EnemyDestroyed;
@@ -84,7 +113,10 @@ public class AIGameManager : MonoBehaviour
 
         for (int i = 0; i < StartingFriendlyCount; i++)
         {
-            friendlies.Add(SpawnAgent(AIRole.Friendly, friendlyColor, GetFriendlySpawnPosition()));
+            FriendlyRarity rarity = GetRandomRarity();
+            AIAgent friendly = SpawnAgent(AIRole.Friendly, rarity != null ? rarity.color : friendlyColor, GetFriendlySpawnPosition());
+            friendly.Initialize(AIRole.Friendly, rarity);
+            friendlies.Add(friendly);
         }
 
         FriendliesSpawned?.Invoke(StartingFriendlyCount);
@@ -108,6 +140,11 @@ public class AIGameManager : MonoBehaviour
         return seenZoneRadius > 0f && Vector2.Distance(position, seenZonePosition) <= seenZoneRadius;
     }
 
+    public bool IsInGatherZone(Vector2 position)
+    {
+        return Vector2.Distance(position, BoardRect.center) <= GatherRadius;
+    }
+
     public void KillFriendly(AIAgent friendly)
     {
         HasFriendlyDied = true;
@@ -120,6 +157,7 @@ public class AIGameManager : MonoBehaviour
     {
         FriendliesReachedTarget++;
         Despawn(friendly);
+        FriendlyWorthCollected?.Invoke(friendly.Rarity != null ? friendly.Rarity.worth : DefaultFriendlyWorth);
         FriendlyReachedTarget?.Invoke(FriendliesReachedTarget);
 
         if (!HasFriendlyDied && FriendliesReachedTarget == StartingFriendlyCount)
@@ -222,6 +260,11 @@ public class AIGameManager : MonoBehaviour
         return agent;
     }
 
+    private FriendlyRarity GetRandomRarity()
+    {
+        return friendlyRarities.Count > 0 ? friendlyRarities[Random.Range(0, friendlyRarities.Count)] : null;
+    }
+
     private Vector2 GetRandomBoardPosition()
     {
         Rect area = GetCameraRect();
@@ -305,8 +348,10 @@ public class AIGameManager : MonoBehaviour
         if (Camera.main != null)
         {
             Rect area = GetCameraRect();
-            Gizmos.color = Color.cyan; // The board: spawn area and wander bounds
+            Gizmos.color = Color.cyan; // The board: spawn area and enemy wander bounds
             Gizmos.DrawWireCube(area.center, area.size);
+            Gizmos.color = Color.blue; // Unseen friendlies gather and wander in here
+            Gizmos.DrawWireSphere(area.center, GatherRadius);
         }
 
         if (target == null)
