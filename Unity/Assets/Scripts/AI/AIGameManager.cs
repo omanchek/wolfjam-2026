@@ -14,38 +14,67 @@ public class AIGameManager : MonoBehaviour
     [Header("Movement")]
     [SerializeField, Min(0f)] private float friendlySpeed = 2f;
     [SerializeField, Min(0f)] private float enemySpeed = 2f;
+    [SerializeField, Min(0f)] private float wanderSpeed = 1f;
+    [SerializeField, Min(0.01f)] private float wanderTurnInterval = 2f;
     [SerializeField, Min(0f)] private float arrivalRadius = 0.75f;
 
+    [Header("Enemy Behavior")]
+    [SerializeField, Min(0f)] private float detectionRadius = 3f;
+    [SerializeField, Min(0f)] private float attackRange = 0.5f;
+    [SerializeField, Min(0f)] private float attackDuration = 2f;
+    [SerializeField, Min(0f)] private float seenDestroyDuration = 2f;
+
     [Header("Spawning")]
-    [SerializeField, Min(0.01f)] private float spawnInterval = 1.5f;
-    [SerializeField, Min(0)] private int maxAgents = 20;
-    [SerializeField, Range(0f, 1f)] private float friendlyChance = 0.5f;
+    [SerializeField, Min(0)] private int initialFriendlies = 8;
+    [SerializeField, Min(0.01f)] private float enemySpawnInterval = 1.5f;
+    [SerializeField, Min(0)] private int maxEnemies = 20;
     [SerializeField, Min(0f)] private float minSpawnDistanceFromTarget = 2f;
-    [SerializeField] private bool spawnSeen = true; // Nothing sets visibility yet, so agents default to seen
 
     [Header("Appearance")]
     [SerializeField] private Color friendlyColor = Color.green;
     [SerializeField] private Color enemyColor = Color.red;
 
-    private readonly List<AIAgent> agents = new List<AIAgent>();
+    private readonly List<AIAgent> friendlies = new List<AIAgent>();
+    private readonly List<AIAgent> enemies = new List<AIAgent>();
     private Camera mainCamera;
     private float spawnTimer;
 
     public float FriendlySpeed => friendlySpeed;
     public float EnemySpeed => enemySpeed;
+    public float WanderSpeed => wanderSpeed;
+    public float WanderTurnInterval => wanderTurnInterval;
     public float ArrivalRadius => arrivalRadius;
+    public float DetectionRadius => detectionRadius;
+    public float AttackRange => attackRange;
+    public float AttackDuration => attackDuration;
+    public float SeenDestroyDuration => seenDestroyDuration;
     public Vector2 TargetPosition => target.position;
+    public Rect BoardRect => GetCameraRect();
 
     public void Despawn(AIAgent agent)
     {
-        agents.Remove(agent);
+        friendlies.Remove(agent);
+        enemies.Remove(agent);
         Destroy(agent.gameObject);
     }
 
-    public bool IsCompletelyOffscreen(Bounds bounds)
+    public AIAgent FindNearestFriendly(Vector2 position, float radius)
     {
-        Rect boundsRect = Rect.MinMaxRect(bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y);
-        return !GetCameraRect().Overlaps(boundsRect);
+        AIAgent nearest = null;
+        float nearestDistance = radius;
+
+        foreach (AIAgent friendly in friendlies)
+        {
+            float distance = Vector2.Distance(position, friendly.transform.position);
+
+            if (distance <= nearestDistance)
+            {
+                nearest = friendly;
+                nearestDistance = distance;
+            }
+        }
+
+        return nearest;
     }
 
     private void Awake()
@@ -54,30 +83,37 @@ public class AIGameManager : MonoBehaviour
         mainCamera = Camera.main;
     }
 
+    private void Start()
+    {
+        for (int i = 0; i < initialFriendlies; i++)
+        {
+            friendlies.Add(SpawnAgent(AIRole.Friendly, friendlyColor));
+        }
+    }
+
     private void Update()
     {
         spawnTimer += Time.deltaTime;
 
-        if (spawnTimer < spawnInterval)
+        if (spawnTimer < enemySpawnInterval)
         {
             return;
         }
 
         spawnTimer = 0f;
 
-        if (agents.Count < maxAgents)
+        if (enemies.Count < maxEnemies)
         {
-            SpawnAgent();
+            enemies.Add(SpawnAgent(AIRole.Enemy, enemyColor));
         }
     }
 
-    private void SpawnAgent()
+    private AIAgent SpawnAgent(AIRole role, Color color)
     {
-        AIRole role = Random.value < friendlyChance ? AIRole.Friendly : AIRole.Enemy;
         AIAgent agent = Instantiate(agentPrefab, GetSpawnPosition(), Quaternion.identity, transform);
-        agent.Initialize(role, spawnSeen);
-        agent.GetComponentInChildren<SpriteRenderer>().color = role == AIRole.Friendly ? friendlyColor : enemyColor;
-        agents.Add(agent);
+        agent.Initialize(role);
+        agent.GetComponentInChildren<SpriteRenderer>().color = color;
+        return agent;
     }
 
     private Vector2 GetSpawnPosition()
@@ -112,7 +148,7 @@ public class AIGameManager : MonoBehaviour
         if (Camera.main != null)
         {
             Rect area = GetCameraRect();
-            Gizmos.color = Color.cyan; // Spawn area, and the bounds enemies despawn past
+            Gizmos.color = Color.cyan; // The board: spawn area and wander bounds
             Gizmos.DrawWireCube(area.center, area.size);
         }
 
@@ -121,7 +157,7 @@ public class AIGameManager : MonoBehaviour
             return;
         }
 
-        Gizmos.color = friendlyColor; // Friendlies despawn inside this radius
+        Gizmos.color = friendlyColor; // Seen friendlies despawn inside this radius
         Gizmos.DrawWireSphere(target.position, arrivalRadius);
         Gizmos.color = Color.yellow; // Agents don't spawn inside this radius
         Gizmos.DrawWireSphere(target.position, minSpawnDistanceFromTarget);
