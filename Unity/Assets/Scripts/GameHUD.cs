@@ -23,6 +23,7 @@ public class GameHUD : MonoBehaviour
     private void Awake()
     {
         GlobalData.GetInstance().onLightScoreUpdated += OnLightScoreUpdated;
+        GlobalData.GetInstance().onTutorialTextUpdated += OnTutorialTextUpdated;
     }
 
     private void Update()
@@ -64,6 +65,11 @@ public class GameHUD : MonoBehaviour
     {
         lightScoreText.text = score.ToString();
         if (isIncrease) BeginLightEffect();
+    }
+
+    private void OnTutorialTextUpdated(string text)
+    {
+        Debug.Log(text);
     }
 
     private void UpdateLightEffect()

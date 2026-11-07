@@ -53,9 +53,12 @@ public class GlobalData : MonoBehaviour
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
     public delegate void OnLightScoreUpdated(int score, bool isIncrease);
+    public delegate void OnTutorialStepUpdated(int newStep, TutorialTrigger trigger);
+    public delegate void OnTutorialTextUpdated(string newText);
 
     //DATA FUNCTIONS
     public int GetLightScore() { return lightScore; }
+    public int GetTutorialStep() { return tutorialStep; }
     public void DecrementLightScore(int amount)
     {
         lightScore -= amount;
@@ -74,8 +77,17 @@ public class GlobalData : MonoBehaviour
         lightScore = score;        
     }
 
+    public void SetTutorialStep(int step, TutorialTrigger caller)
+    {
+        if (onTutorialStepUpdated != null) onTutorialStepUpdated.Invoke(tutorialStep, caller);
+        tutorialStep = step;        
+    }
+
     //DATA VARS
     public OnLightScoreUpdated onLightScoreUpdated;
+    public OnTutorialStepUpdated onTutorialStepUpdated;
+    public OnTutorialTextUpdated onTutorialTextUpdated;
 
     [SerializeField] private int lightScore = 0;
+    [SerializeField] private int tutorialStep = 0;
 }
