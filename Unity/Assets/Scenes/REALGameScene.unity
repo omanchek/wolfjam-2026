@@ -519,7 +519,7 @@ MonoBehaviour:
   attackDuration: 2
   seenDestroyDuration: 2
   enemySpawnInterval: 1.5
-  maxEnemies: 20
+  maxEnemies: 0
   minSpawnDistanceFromTarget: 2
   minEnemySpawnDistanceFromFriendly: 3
   friendlyColor: {r: 0, g: 1, b: 0, a: 1}
@@ -629,6 +629,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4510233523560634201, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7312923342298773514, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7365627248286693689, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}

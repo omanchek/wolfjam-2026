@@ -49,12 +49,14 @@ public class GameHUD : MonoBehaviour
         GlobalData.GetInstance().onLightScoreUpdated += OnLightScoreUpdated;
         GlobalData.GetInstance().onTutorialTextUpdated += OnTutorialTextUpdated;
 
+        upgradePanel.SetActive(false);
+
         AddUpgrades();
     }
 
     private void Start()
     {
-        GenerateUpgrades();
+        GameManager.Instance.UpgradeChoiceRequested += GenerateUpgrades;
     }
 
     private void Update()
@@ -100,6 +102,12 @@ public class GameHUD : MonoBehaviour
         upgradeSet.AddUpgrade(rangeUpgrade1);
         upgradeSet.AddUpgrade(rangeUpgrade2);
         upgradeSet.AddUpgrade(rangeUpgrade3);
+    }
+
+    private void CloseUpgradesMenu()
+    {
+        upgradePanel.SetActive(false);
+        GameManager.Instance.StartNewRound();
     }
 
     private void GenerateUpgrades()
@@ -155,6 +163,8 @@ public class GameHUD : MonoBehaviour
                 upgradeStat(upgrade2);
                 break;
         }
+
+        CloseUpgradesMenu();
     }
 
     private void upgradeStat(UpgradeSet.UpgradeContainer upgradeType)
