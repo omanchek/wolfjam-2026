@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     private GlobalData globalData;
     private Tween cameraTween;
 
+    public int TotalRounds => totalRounds;
     public int RoundNumber { get; private set; }
     public GamePhase Phase { get; private set; }
     public int CurrentQuota { get; private set; }
@@ -40,7 +41,7 @@ public class GameManager : MonoBehaviour
 
     public event Action GameOver;
     public event Action UpgradeChoiceRequested; // The upgrade UI should open on this
-    public event Action<int, int> QuotaChanged; // Passes the progress, then the quota
+    public event Action RoundStarted;
 
     public void StartNewRound()
     {
@@ -55,7 +56,7 @@ public class GameManager : MonoBehaviour
         Phase = GamePhase.Playing;
         CurrentQuota = roundQuotas.Count > 0 ? roundQuotas[Mathf.Min(RoundNumber - 1, roundQuotas.Count - 1)] : 0;
         QuotaProgress = 0;
-        QuotaChanged?.Invoke(QuotaProgress, CurrentQuota);
+        RoundStarted?.Invoke();
         AIGameManager.Instance.StartRound(friendliesPerRound);
     }
 
@@ -70,6 +71,7 @@ public class GameManager : MonoBehaviour
         AIGameManager.Instance.AllFriendliesGone += HandleAllFriendliesGone;
         globalData = GlobalData.GetInstance();
         globalData.onUpgradeChoiceFinished += HandleUpgradeChoiceFinished;
+        globalData.SetLightScore(0); // GlobalData outlives the scene, so a new run must clear the last score
         StartNewRound();
     }
 
@@ -92,8 +94,7 @@ public class GameManager : MonoBehaviour
     private void HandleFriendlyReachedTarget(int totalReached)
     {
         QuotaProgress += quotaRewardPerFriendly;
-        GlobalData.GetInstance().IncrementLightScore(1);
-        QuotaChanged?.Invoke(GlobalData.GetInstance().GetLightScore(), CurrentQuota);
+        globalData.IncrementLightScore(quotaRewardPerFriendly);
     }
 
     private void HandleAllFriendliesGone()

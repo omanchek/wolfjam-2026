@@ -130,6 +130,11 @@ public class AIGameManager : MonoBehaviour
         NotifyIfAllFriendliesGone();
     }
 
+    public void ApplySeenDestroyUpgrade(float upgradeValue)
+    {
+        seenDestroyDuration /= 1f + upgradeValue;
+    }
+
     public void KillEnemy(AIAgent enemy)
     {
         Despawn(enemy);

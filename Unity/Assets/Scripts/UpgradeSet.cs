@@ -28,11 +28,17 @@ public class UpgradeSet : MonoBehaviour
     }
 
     //members
-    [SerializeField] List<UpgradeContainer> upgradeList;
+    [SerializeField] List<UpgradeContainer> upgradeList; // What the player owns
+    [SerializeField] List<UpgradeContainer> upgradeOptions = new List<UpgradeContainer>(); // What can be offered
 
     public void AddUpgrade(UpgradeContainer upgrade)
     {
         upgradeList.Add(upgrade);
+    }
+
+    public void AddUpgradeOption(UpgradeContainer upgrade)
+    {
+        upgradeOptions.Add(upgrade);
     }
 
     public List<UpgradeContainer> GetUpgradesByType(UpgradeTypes type)
@@ -50,7 +56,7 @@ public class UpgradeSet : MonoBehaviour
 
     public UpgradeContainer GetUpgradeSpecific(UpgradeTypes type)
     {
-        var listOfUpgrades = GetUpgradesByType(type);
+        var listOfUpgrades = upgradeOptions.FindAll(upgrade => upgrade.mType == type);
         int index = UnityEngine.Random.Range(0, listOfUpgrades.Count);
         return listOfUpgrades[index];
     }
