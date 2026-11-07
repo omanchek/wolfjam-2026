@@ -246,6 +246,14 @@ PrefabInstance:
       propertyPath: m_text
       value: NightWatch
       objectReference: {fileID: 0}
+    - target: {fileID: 4385167048964026943, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4883062549701649831, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4885087208613447990, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
       propertyPath: m_Pivot.x
       value: 0

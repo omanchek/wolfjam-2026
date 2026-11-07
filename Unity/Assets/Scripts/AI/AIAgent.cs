@@ -30,6 +30,7 @@ public class AIAgent : MonoBehaviour
     private float seenTimer;
     private float attackTimer;
     private float migrationTimer;
+    private GameObject exclamationObj = null;
 
     public AIRole Role => role;
     public AIState State => state;
@@ -193,9 +194,27 @@ public class AIAgent : MonoBehaviour
             Move(toPrey, AIGameManager.Instance.EnemySpeed); // Keep up so walking prey can't reset the timer
         }
 
+        if (attackTimer > 0)
+        {            
+            if (exclamationObj == null)
+            {
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    if (transform.GetChild(i).gameObject.tag == "EXCLAMATION")
+                    {
+                        exclamationObj = transform.GetChild(i).gameObject;
+                        exclamationObj.SetActive(true);
+                    }
+                }
+            }
+
+            exclamationObj.SetActive(true);
+        }
+
         if (attackTimer >= AIGameManager.Instance.AttackDuration)
         {
             AIGameManager.Instance.KillFriendly(prey);
+            exclamationObj.SetActive(false);
             prey = null;
         }
     }

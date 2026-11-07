@@ -242,7 +242,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LightManager
   aiGameManager: {fileID: 1108885929}
-  moveSpeed: 450
+  moveSpeed: 225
   maxRangeFromTarget: 240
   radiusStep: 30
   startColor: {r: 1, g: 1, b: 1, a: 1}
@@ -282,7 +282,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
+  m_Radius: 0.25
 --- !u!4 &68552773
 Transform:
   m_ObjectHideFlags: 0
@@ -606,7 +606,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AIGameManager
   agentPrefab: {fileID: 4658703625000939423, guid: fa1d50c8964ad7c41acd610831aa36e7, type: 3}
   target: {fileID: 1596838031}
-  friendlySpeed: 60
+  friendlySpeed: 30
   enemySpeed: 60
   wanderSpeed: 30
   wanderTurnInterval: 0.5
@@ -621,10 +621,10 @@ MonoBehaviour:
     worth: 5
   detectionRadius: 90
   attackRange: 15
-  attackDuration: 2
+  attackDuration: 1
   seenDestroyDuration: 2
-  enemySpawnInterval: 0.5
-  maxEnemies: 20
+  enemySpawnInterval: 0.25
+  maxEnemies: 50
   minSpawnDistanceFromTarget: 60
   minEnemySpawnDistanceFromFriendly: 90
   friendlyAnimationState: MothFlying
