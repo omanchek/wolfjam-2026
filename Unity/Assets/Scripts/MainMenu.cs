@@ -21,6 +21,11 @@ public class MainMenu : MonoBehaviour
         bgGoalPosition = bgImage.localPosition;
     }
 
+    private void Start()
+    {
+        GlobalData.GetInstance().GetSoundManager().PlaySoundByTypeAndID(SoundManager.SoundTypes.MUSIC, "menu-theme");
+    }
+
     private void Update()
     {
         bgImage.localPosition = Vector3.Lerp(bgImage.localPosition, bgGoalPosition, transitionLerp);

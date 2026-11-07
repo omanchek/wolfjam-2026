@@ -72,6 +72,7 @@ public class GameHUD : MonoBehaviour
         GameManager.Instance.UpgradeChoiceRequested += GenerateUpgrades;
         GameManager.Instance.RoundStarted += UpdateQuotaText;
         GameManager.Instance.GameOver += ShowGameOver;
+        GlobalData.GetInstance().GetSoundManager().PlaySoundByTypeAndID(SoundManager.SoundTypes.MUSIC, "level-theme");
     }
 
     private void OnDestroy()
