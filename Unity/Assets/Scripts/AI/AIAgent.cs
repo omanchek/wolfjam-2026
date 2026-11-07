@@ -101,14 +101,15 @@ public class AIAgent : MonoBehaviour
         }
 
         AIGameManager manager = AIGameManager.Instance;
-        AIAgent nearest = manager.FindNearestFriendly(transform.position, manager.DetectionRadius);
 
-        if (nearest != prey)
+        // Sticking with one victim stops a crowd of friendlies from resetting the attack countdown
+        if (manager.IsAliveFriendly(prey) && Vector2.Distance(transform.position, prey.transform.position) <= manager.DetectionRadius)
         {
-            attackTimer = 0f; // Switching victims restarts the countdown
+            return;
         }
 
-        prey = nearest;
+        attackTimer = 0f;
+        prey = manager.FindNearestFriendly(transform.position, manager.DetectionRadius);
     }
 
     private AIState GetNextState()

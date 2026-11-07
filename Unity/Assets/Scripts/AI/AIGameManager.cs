@@ -144,8 +144,19 @@ public class AIGameManager : MonoBehaviour
         return Vector2.Distance(position, BoardRect.center) <= GatherRadius;
     }
 
+    // Destroy waits for the end of the frame, so a despawned friendly can still be referenced until then
+    public bool IsAliveFriendly(AIAgent friendly)
+    {
+        return friendly != null && friendlies.Contains(friendly);
+    }
+
     public void KillFriendly(AIAgent friendly)
     {
+        if (!IsAliveFriendly(friendly))
+        {
+            return; // Another enemy already finished it this frame
+        }
+
         HasFriendlyDied = true;
         Despawn(friendly);
         FriendlyDied?.Invoke();
@@ -154,6 +165,11 @@ public class AIGameManager : MonoBehaviour
 
     public void ArriveFriendly(AIAgent friendly)
     {
+        if (!IsAliveFriendly(friendly))
+        {
+            return;
+        }
+
         FriendliesReachedTarget++;
         Despawn(friendly);
         FriendlyWorthCollected?.Invoke(friendly.Rarity != null ? friendly.Rarity.worth : DefaultFriendlyWorth);
