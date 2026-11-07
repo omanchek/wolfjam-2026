@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +13,10 @@ public class GameHUD : MonoBehaviour
     [SerializeField] float lightEffectTime = 0.25f;
     [SerializeField] float lightEffectMaxIntensity = 0.75f;
 
+    [Header("Debug")]
+    [SerializeField] UpgradeSet upgradeSet;
+    [SerializeField] RectTransform debugUpgradesTransform;
+
     //members
     float lightEffectTimer = 0.0f;
 
@@ -23,6 +28,7 @@ public class GameHUD : MonoBehaviour
     private void Update()
     {
         UpdateLightEffect();
+        //DebugUpgradeDisplay();
     }
 
     private void BeginLightEffect()
@@ -44,6 +50,14 @@ public class GameHUD : MonoBehaviour
                 GlobalData.GetInstance().SetLightScore(10);
                 break;
         }
+    }
+
+    public void DebugUpgradeDisplay()
+    {
+        List<UpgradeSet.UpgradeContainer> sizeUpgrades = upgradeSet.GetUpgradesByType(UpgradeSet.UpgradeTypes.UP_Area);
+        float scale = 1.0f;
+        for (int i = 0; i < sizeUpgrades.Count; i++) scale *= sizeUpgrades[i].mValue;
+        debugUpgradesTransform.localScale = new Vector3(scale, scale, scale);
     }
 
     private void OnLightScoreUpdated(int score, bool isIncrease)
