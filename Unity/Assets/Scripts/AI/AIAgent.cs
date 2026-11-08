@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 public enum AIRole
@@ -35,6 +36,8 @@ public class AIAgent : MonoBehaviour
     private float attackTimer;
     private float migrationTimer;
     private float noticeTimer;
+    private Vector3 fullScale;
+    private Tween shrinkTween;
 
     public AIRole Role => role;
     public AIState State => state;
@@ -54,6 +57,12 @@ public class AIAgent : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         spriteRenderer.enabled = false; // Stays hidden until its first seen check
+        fullScale = transform.localScale;
+    }
+
+    private void OnDestroy()
+    {
+        shrinkTween?.Kill();
     }
 
     private void Update()
@@ -70,7 +79,9 @@ public class AIAgent : MonoBehaviour
         }
 
         UpdatePrey();
+        AIState previousState = state;
         state = GetNextState();
+        UpdateShrink(previousState);
         exclamation.SetActive(state == AIState.Attacking);
         noticeExclamation.SetActive(state == AIState.Noticed && isSeen);
 
@@ -238,6 +249,25 @@ public class AIAgent : MonoBehaviour
         if (seenTimer >= AIGameManager.Instance.SeenDestroyDuration)
         {
             AIGameManager.Instance.KillEnemy(this);
+        }
+    }
+
+    // A frozen enemy shrinks away over the time it takes to destroy it, and grows back if the light lets it go
+    private void UpdateShrink(AIState previousState)
+    {
+        bool startedFreezing = state == AIState.Frozen && previousState != AIState.Frozen;
+        bool stoppedFreezing = state != AIState.Frozen && previousState == AIState.Frozen;
+
+        if (startedFreezing)
+        {
+            shrinkTween?.Kill();
+            shrinkTween = transform.DOScale(fullScale * 0.01f, AIGameManager.Instance.SeenDestroyDuration).SetEase(Ease.Linear);
+        }
+        else if (stoppedFreezing && shrinkTween != null)
+        {
+            float timeSpentShrinking = shrinkTween.Elapsed();
+            shrinkTween.Kill();
+            shrinkTween = transform.DOScale(fullScale, timeSpentShrinking).SetEase(Ease.Linear); // Undoes the shrink at the same pace
         }
     }
 
