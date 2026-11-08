@@ -23,6 +23,8 @@ public class AIAgent : MonoBehaviour
     [SerializeField] private bool isSeen;
     [SerializeField] private AIState state;
     [SerializeField] private GameObject exclamation; // Shown while attacking, which only happens out of the light
+    [SerializeField] private GameObject noticeExclamation; // Shown while a friendly pauses in the light
+    [SerializeField] private Vector2 noticeExclamationOffset = new Vector2(-13f, 12f); // From the agent, in screen directions
 
     private Animator animator;
     private SpriteRenderer spriteRenderer;
@@ -70,6 +72,7 @@ public class AIAgent : MonoBehaviour
         UpdatePrey();
         state = GetNextState();
         exclamation.SetActive(state == AIState.Attacking);
+        noticeExclamation.SetActive(state == AIState.Noticed && isSeen);
 
         //update exclamation visbility
         if (attackTimer > 0)
@@ -112,6 +115,7 @@ public class AIAgent : MonoBehaviour
         }
 
         exclamation.transform.rotation = Quaternion.identity; // Undoes the turn the agent made while moving
+        noticeExclamation.transform.SetPositionAndRotation(transform.position + (Vector3)noticeExclamationOffset, Quaternion.identity);
     }
 
     private void UpdatePrey()
