@@ -4059,18 +4059,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 969441224}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1550905253}
-  m_Father: {fileID: 1162554858}
+  m_Father: {fileID: 1137479100}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 806, y: -165}
-  m_SizeDelta: {x: 256, y: 64}
+  m_AnchoredPosition: {x: 738.8, y: 25}
+  m_SizeDelta: {x: 384, y: 128}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &969441226
 MonoBehaviour:
@@ -4782,6 +4782,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4510233523560634201, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 835186948}
+    - targetCorrespondingSourceObject: {fileID: 4510233523560634201, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 969441225}
     - targetCorrespondingSourceObject: {fileID: 159889468475658537, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}
       insertIndex: 0
       addedObject: {fileID: 296277138}
@@ -4861,7 +4864,6 @@ RectTransform:
   - {fileID: 691162082}
   - {fileID: 10014026}
   - {fileID: 633072929}
-  - {fileID: 969441225}
   m_Father: {fileID: 1137479100}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -5299,8 +5301,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 96
+  m_fontSizeBase: 96
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
