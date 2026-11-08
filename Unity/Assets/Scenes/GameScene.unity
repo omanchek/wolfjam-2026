@@ -2901,7 +2901,7 @@ MonoBehaviour:
   detectionRadius: 90
   attackRange: 15
   attackDuration: 2
-  seenDestroyDuration: 2
+  seenDestroyDuration: 0.75
   enemySpawnInterval: 0.75
   maxEnemies: 30
   minSpawnDistanceFromTarget: 60

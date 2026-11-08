@@ -17,10 +17,6 @@ public class GameHUD : MonoBehaviour
     //components
     [Header("Light")]
     [SerializeField] TextMeshProUGUI lightScoreText;
-    [SerializeField] Image lightCollectionEffect;
-    [SerializeField] Color lightEffectColor;
-    [SerializeField] float lightEffectTime = 0.25f;
-    [SerializeField] float lightEffectMaxIntensity = 0.75f;
     [SerializeField] LightManager lightManager;
 
     [Header("Pause")]
@@ -95,16 +91,6 @@ public class GameHUD : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        UpdateLightEffect();
-    }
-
-    private void BeginLightEffect()
-    {
-        lightEffectTimer = lightEffectTime;
-    }
-
     private void AddUpgradeOptions()
     {
         speedUpgrade1 = new UpgradeSet.UpgradeContainer(UpgradeSet.UpgradeTypes.UP_Speed, 0.005f);
@@ -164,11 +150,6 @@ public class GameHUD : MonoBehaviour
     {
         lightScoreText.text = score.ToString();
         UpdateQuotaText();
-
-        if (isIncrease)
-        {
-            BeginLightEffect();
-        }
     }
 
     private void UpdateQuotaText()
@@ -237,17 +218,6 @@ public class GameHUD : MonoBehaviour
         {
             pausePanel.SetActive(false);
             Time.timeScale = 1.0f;
-        }
-    }
-
-    private void UpdateLightEffect()
-    {
-        //check if running
-        if (lightEffectTimer > 0.0f)
-        {
-            lightEffectTimer -= Time.deltaTime;
-            lightCollectionEffect.color = new Color(lightEffectColor.r, lightEffectColor.g, lightEffectColor.b,
-                                                    Mathf.Lerp(0.0f, lightEffectMaxIntensity, lightEffectTimer / lightEffectTime));
         }
     }
 }
