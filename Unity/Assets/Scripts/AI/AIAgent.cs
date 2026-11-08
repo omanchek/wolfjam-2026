@@ -61,6 +61,14 @@ public class AIAgent : MonoBehaviour
         state = GetNextState();
         exclamation.SetActive(state == AIState.Attacking);
 
+        //update exclamation visbility
+        if (attackTimer > 0)
+        {
+            exclamation.GetComponent<SpriteRenderer>().color = Color.Lerp(Color.clear, Color.white, attackTimer / AIGameManager.Instance.AttackDuration);
+            float scale = Mathf.Lerp(0.05f, 0.15f, attackTimer / AIGameManager.Instance.AttackDuration);
+            exclamation.transform.localScale = new Vector3(scale, scale, scale);
+        }
+
         if (state != AIState.Frozen)
         {
             seenTimer = 0f; // The seen time must be continuous
