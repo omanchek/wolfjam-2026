@@ -2645,17 +2645,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &367279681 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2771068951452293779, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}
-  m_PrefabInstance: {fileID: 1137479099}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4864ec322d975e4aaa4dd76cb7a9bbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameHUD
 --- !u!1 &296277137
 GameObject:
   m_ObjectHideFlags: 0
@@ -2865,6 +2854,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 331380552}
   m_CullTransparentMesh: 1
+--- !u!114 &367279681 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2771068951452293779, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}
+  m_PrefabInstance: {fileID: 1137479099}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4864ec322d975e4aaa4dd76cb7a9bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameHUD
 --- !u!1 &425275973
 GameObject:
   m_ObjectHideFlags: 0
@@ -3547,6 +3547,7 @@ MonoBehaviour:
   wanderTurnInterval: 0.5
   arrivalRadius: 22.5
   migrationDuration: 2
+  noticePauseDuration: 0.5
   friendlyRarities:
   - name: Common
     worth: 1

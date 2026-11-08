@@ -13,7 +13,8 @@ public enum AIState
     Chasing,
     Attacking,
     Frozen,
-    Gathering
+    Gathering,
+    Noticed
 }
 
 public class AIAgent : MonoBehaviour
@@ -31,6 +32,7 @@ public class AIAgent : MonoBehaviour
     private float seenTimer;
     private float attackTimer;
     private float migrationTimer;
+    private float noticeTimer;
 
     public AIRole Role => role;
     public AIState State => state;
@@ -57,6 +59,14 @@ public class AIAgent : MonoBehaviour
         isSeen = AIGameManager.Instance.IsInSeenZone(transform.position);
         spriteRenderer.enabled = isSeen;
         migrationTimer = isSeen ? AIGameManager.Instance.MigrationDuration : migrationTimer - Time.deltaTime;
+        noticeTimer -= Time.deltaTime;
+
+        // A friendly caught while roaming pauses briefly so the player can see they found it
+        if (role == AIRole.Friendly && isSeen && (state == AIState.Wandering || state == AIState.Gathering))
+        {
+            noticeTimer = AIGameManager.Instance.NoticePauseDuration;
+        }
+
         UpdatePrey();
         state = GetNextState();
         exclamation.SetActive(state == AIState.Attacking);
@@ -128,6 +138,11 @@ public class AIAgent : MonoBehaviour
     {
         if (role == AIRole.Friendly)
         {
+            if (noticeTimer > 0f)
+            {
+                return AIState.Noticed;
+            }
+
             if (isSeen || migrationTimer > 0f)
             {
                 return AIState.Advancing;
@@ -275,6 +290,8 @@ public class AIAgent : MonoBehaviour
         {
             case AIState.Advancing:
                 return Color.green;
+            case AIState.Noticed:
+                return Color.yellow;
             case AIState.Chasing:
                 return Color.magenta;
             case AIState.Attacking:

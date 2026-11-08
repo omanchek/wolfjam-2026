@@ -442,6 +442,7 @@ MonoBehaviour:
   wanderTurnInterval: 2
   arrivalRadius: 22.5
   migrationDuration: 2
+  noticePauseDuration: 0.5
   friendlyRarities:
   - name: Common
     worth: 1

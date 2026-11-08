@@ -36,6 +36,7 @@ public class AIGameManager : MonoBehaviour
     [SerializeField, Min(0.01f)] private float wanderTurnInterval = 2f;
     [SerializeField, Min(0f)] private float arrivalRadius = 22.5f;
     [SerializeField, Min(0f)] private float migrationDuration = 2f;
+    [SerializeField, Min(0f)] private float noticePauseDuration = 0.5f; // How long a friendly freezes when first caught by the light
 
     [Header("Friendly Rarities")]
     [SerializeField] private List<FriendlyRarity> friendlyRarities = new List<FriendlyRarity>
@@ -76,6 +77,7 @@ public class AIGameManager : MonoBehaviour
     public float WanderTurnInterval => wanderTurnInterval;
     public float ArrivalRadius => arrivalRadius;
     public float MigrationDuration => migrationDuration;
+    public float NoticePauseDuration => noticePauseDuration;
     public float DetectionRadius => detectionRadius;
     public float AttackRange => attackRange;
     public float AttackDuration => attackDuration;
