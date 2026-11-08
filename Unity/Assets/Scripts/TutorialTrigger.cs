@@ -5,6 +5,7 @@ public class TutorialTrigger : MonoBehaviour
     [Header("Configuration")]
     [SerializeField] private int tutorialIndex;
     [SerializeField, Multiline] private string tutorialText;
+    [SerializeField] private string tutorialTitle;
 
     [Header("Debug")]
     [SerializeField] private bool isActive = true;
@@ -18,7 +19,11 @@ public class TutorialTrigger : MonoBehaviour
     private void Start()
     {
         //call first step if needed
-        if (tutorialIndex == 0) GlobalData.GetInstance().onTutorialStepUpdated.Invoke(-1, this);
+        if (tutorialIndex == 0)
+        {
+            GlobalData.GetInstance().onTutorialStepUpdated.Invoke(-1, this);
+            GlobalData.GetInstance().onTutorialTextUpdated.Invoke(this);
+        }
     }
 
     public bool CallTrigger()
@@ -49,11 +54,16 @@ public class TutorialTrigger : MonoBehaviour
         return tutorialText;
     }
 
+    public string GetTutorialTitle()
+    {
+        return tutorialTitle;
+    }
+
     private void OnTutorialStepUpdated(int step, TutorialTrigger trigger)
     {
-        if (step == tutorialIndex - 1)
+        if (step == tutorialIndex)
         {
-            GlobalData.GetInstance().onTutorialTextUpdated.Invoke(tutorialText);
+            GlobalData.GetInstance().onTutorialTextUpdated.Invoke(trigger);
         }
     }
 }
