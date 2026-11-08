@@ -10,6 +10,7 @@ public class LightManager : MonoBehaviour
     [SerializeField, Min(0f)] float moveSpeed = 450f;
     [SerializeField, Min(0f)] float maxRangeFromTarget = 240f;
     [SerializeField, Min(0f)] float radiusStep = 30f; // How much one point of area upgrade adds to the light's scale
+    [SerializeField] GameHUD gameHUD;
 
     PlayerActions playerActions;
     CircleCollider2D lightCollider;
@@ -29,12 +30,18 @@ public class LightManager : MonoBehaviour
 
         playerActions.MouseActions.IncreaseRadius.performed += IncreaseRadius;
         playerActions.MouseActions.DecreaseRadius.performed += DecreaseRadius;
+        playerActions.MouseActions.Escape.started += OnPause;
     }
 
     private void Update()
     {
         UpdateLightPos();
         UpdateLightState();
+    }
+
+    private void OnPause(InputAction.CallbackContext ctx)
+    {
+        gameHUD.ToggleGamePaused(true);
     }
 
     private void UpdateLightPos()

@@ -121,6 +121,16 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": false,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""Escape"",
+                    ""type"": ""Button"",
+                    ""id"": ""92a12437-8ccb-407f-b4d2-3222450a707b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -156,6 +166,17 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""action"": ""DecreaseRadius"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4eaf699f-6077-4e51-b4e4-f2ee39eb1054"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Escape"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -167,6 +188,7 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         m_MouseActions_MouseLocation = m_MouseActions.FindAction("MouseLocation", throwIfNotFound: true);
         m_MouseActions_IncreaseRadius = m_MouseActions.FindAction("IncreaseRadius", throwIfNotFound: true);
         m_MouseActions_DecreaseRadius = m_MouseActions.FindAction("DecreaseRadius", throwIfNotFound: true);
+        m_MouseActions_Escape = m_MouseActions.FindAction("Escape", throwIfNotFound: true);
     }
 
     ~@PlayerActions()
@@ -250,6 +272,7 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_MouseActions_MouseLocation;
     private readonly InputAction m_MouseActions_IncreaseRadius;
     private readonly InputAction m_MouseActions_DecreaseRadius;
+    private readonly InputAction m_MouseActions_Escape;
     /// <summary>
     /// Provides access to input actions defined in input action map "MouseActions".
     /// </summary>
@@ -273,6 +296,10 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "MouseActions/DecreaseRadius".
         /// </summary>
         public InputAction @DecreaseRadius => m_Wrapper.m_MouseActions_DecreaseRadius;
+        /// <summary>
+        /// Provides access to the underlying input action "MouseActions/Escape".
+        /// </summary>
+        public InputAction @Escape => m_Wrapper.m_MouseActions_Escape;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -308,6 +335,9 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @DecreaseRadius.started += instance.OnDecreaseRadius;
             @DecreaseRadius.performed += instance.OnDecreaseRadius;
             @DecreaseRadius.canceled += instance.OnDecreaseRadius;
+            @Escape.started += instance.OnEscape;
+            @Escape.performed += instance.OnEscape;
+            @Escape.canceled += instance.OnEscape;
         }
 
         /// <summary>
@@ -328,6 +358,9 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @DecreaseRadius.started -= instance.OnDecreaseRadius;
             @DecreaseRadius.performed -= instance.OnDecreaseRadius;
             @DecreaseRadius.canceled -= instance.OnDecreaseRadius;
+            @Escape.started -= instance.OnEscape;
+            @Escape.performed -= instance.OnEscape;
+            @Escape.canceled -= instance.OnEscape;
         }
 
         /// <summary>
@@ -389,5 +422,12 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDecreaseRadius(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Escape" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEscape(InputAction.CallbackContext context);
     }
 }

@@ -245,6 +245,7 @@ MonoBehaviour:
   moveSpeed: 225
   maxRangeFromTarget: 240
   radiusStep: 30
+  gameHUD: {fileID: 367279681}
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!58 &68552772
@@ -377,6 +378,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &367279681 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2771068951452293779, guid: 1c32cc88961bd1a478561ac31936c3cf, type: 3}
+  m_PrefabInstance: {fileID: 1137479099}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4864ec322d975e4aaa4dd76cb7a9bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameHUD
 --- !u!1 &826630258
 GameObject:
   m_ObjectHideFlags: 0
