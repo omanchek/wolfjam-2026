@@ -245,6 +245,9 @@ MonoBehaviour:
   moveSpeed: 13500
   maxRangeFromTarget: 7200
   radiusStep: 30
+  gameHUD: {fileID: 0}
+  startColor: {r: 1, g: 1, b: 1, a: 1}
+  endColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!58 &68552772
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -442,13 +445,10 @@ MonoBehaviour:
   friendlyRarities:
   - name: Common
     worth: 1
-    color: {r: 0.1, g: 0.45, b: 0.2, a: 1}
   - name: Rare
     worth: 2
-    color: {r: 0.15, g: 0.85, b: 0.25, a: 1}
   - name: Legendary
     worth: 5
-    color: {r: 0.7, g: 1, b: 0.55, a: 1}
   detectionRadius: 90
   attackRange: 15
   attackDuration: 2
@@ -457,13 +457,12 @@ MonoBehaviour:
   maxEnemies: 20
   minSpawnDistanceFromTarget: 60
   minEnemySpawnDistanceFromFriendly: 90
-  friendlyColor: {r: 0, g: 1, b: 0, a: 1}
-  enemyColor: {r: 1, g: 1, b: 1, a: 1}
   friendlyAnimationState: MothFlying
   enemyAnimationStates:
   - BatFlying
   - HawkFlying
   - OwlFlying
+  lightManager: {fileID: 0}
 --- !u!4 &1108885930
 Transform:
   m_ObjectHideFlags: 0
@@ -510,11 +509,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   totalRounds: 5
   friendliesPerRound: 8
-  cameraSizes:
-  - 150
-  - 210
-  - 300
   cameraTransitionDuration: 2
+  cameraSizePerAreaUpgrade: 100
+  background: {fileID: 0}
   roundQuotas: 040000000500000006000000i
 --- !u!4 &1165026544
 Transform:
@@ -541,6 +538,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1596838031}
   - component: {fileID: 1596838032}
+  - component: {fileID: 1596838033}
   m_Layer: 0
   m_Name: Target
   m_TagString: Untagged
@@ -623,6 +621,30 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
+--- !u!114 &1596838033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1596838030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6cee0825b2692b4f88e62bc2617c8f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LighthouseOrbit
+  mothVisual: {fileID: 3409893048487940168, guid: fa1d50c8964ad7c41acd610831aa36e7, type: 3}
+  mothAnimationState: MothFlying
+  mothColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  mothScale: 0.5
+  backScale: 0.8
+  frontSortingOrder: 11
+  backSortingOrder: 9
+  orbitCenterOffset: {x: 0, y: 2}
+  orbitRadii: {x: 40, y: 14}
+  orbitDegreesPerSecond: 45
+  effectDuration: 0.4
+  pulseStrength: 0.15
 --- !u!1 &1639695132
 GameObject:
   m_ObjectHideFlags: 0
