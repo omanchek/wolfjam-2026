@@ -16,11 +16,11 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [SerializeField, Min(1)] private int totalRounds = 5;
-    [SerializeField, Min(0)] private int friendliesPerRound = 8;
+    [SerializeField, Min(0)] private List<int> friendliesPerRound = new List<int> { 20, 25, 30, 35, 40 }; // One per round, the last repeats
     [SerializeField, Min(0f)] private float cameraTransitionDuration = 2f;
     [SerializeField, Min(0f)] private float cameraSizePerAreaUpgrade = 100f; // Added per point of upgrade value
     [SerializeField] private SpriteRenderer background; // The camera never shows past this
-    [SerializeField] private List<int> roundQuotas = new List<int> { 4, 5, 6 }; // One per round, the last repeats
+    [SerializeField, Min(0)] private List<int> roundQuotas = new List<int> { 4, 5, 6 }; // One per round, the last repeats
 
     private GlobalData globalData;
     private Tween cameraTween;
@@ -34,11 +34,7 @@ public class GameManager : MonoBehaviour
     public int QuotaProgress { get; private set; }
     public bool ClearedAllRounds { get; private set; } // Tells a finished run apart from a missed quota at game over
 
-    public int FriendliesPerRound
-    {
-        get => friendliesPerRound;
-        set => friendliesPerRound = Mathf.Max(0, value);
-    }
+    public int CurrentFriendlyCount { get; private set; }
 
     public event Action GameOver;
     public event Action UpgradeChoiceRequested; // The upgrade UI should open on this
@@ -48,10 +44,11 @@ public class GameManager : MonoBehaviour
     {
         RoundNumber++;
         Phase = GamePhase.Playing;
-        CurrentQuota = roundQuotas.Count > 0 ? roundQuotas[Mathf.Min(RoundNumber - 1, roundQuotas.Count - 1)] : 0;
+        CurrentQuota = GetValueForRound(roundQuotas);
+        CurrentFriendlyCount = GetValueForRound(friendliesPerRound);
         QuotaProgress = 0;
         RoundStarted?.Invoke();
-        AIGameManager.Instance.StartRound(friendliesPerRound);
+        AIGameManager.Instance.StartRound(CurrentFriendlyCount);
     }
 
     public void ApplyAreaUpgrade(float upgradeValue)
@@ -145,5 +142,11 @@ public class GameManager : MonoBehaviour
         {
             StartNewRound();
         }
+    }
+
+    // Rounds past the end of the list reuse its last value, and an empty list gives 0
+    private int GetValueForRound(List<int> perRoundValues)
+    {
+        return perRoundValues.Count > 0 ? perRoundValues[Mathf.Min(RoundNumber - 1, perRoundValues.Count - 1)] : 0;
     }
 }
