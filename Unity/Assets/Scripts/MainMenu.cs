@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
@@ -29,6 +30,19 @@ public class MainMenu : MonoBehaviour
     private void Update()
     {
         bgImage.localPosition = Vector3.Lerp(bgImage.localPosition, bgGoalPosition, transitionLerp);
+    }
+
+    public void PlayGame()
+    {
+        if (GlobalData.GetInstance().tutorialPlayed)
+        {
+            SceneManager.LoadScene("GameScene");
+        }
+        else
+        {
+            GlobalData.GetInstance().tutorialPlayed = true;
+            SceneManager.LoadScene("TutorialScene");            
+        }
     }
 
     public void PanToMain()

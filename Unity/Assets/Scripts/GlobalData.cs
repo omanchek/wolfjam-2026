@@ -105,6 +105,7 @@ public class GlobalData : MonoBehaviour
     public OnTutorialStepUpdated onTutorialStepUpdated;
     public OnTutorialTextUpdated onTutorialTextUpdated;
 
+    public bool tutorialPlayed = false;
     [SerializeField] private int lightScore = 0;
     [SerializeField] private int tutorialStep = 0;
     private SoundManager soundManager;

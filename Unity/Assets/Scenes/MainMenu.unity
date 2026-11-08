@@ -222,6 +222,34 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 129.4
       objectReference: {fileID: 0}
+    - target: {fileID: 2046755394459888845, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046755394459888845, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046755394459888845, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1054340703}
+    - target: {fileID: 2046755394459888845, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: PlayGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046755394459888845, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MainMenu, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046755394459888845, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046755394459888845, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 2746931250187011274, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
@@ -334,6 +362,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5243530405414740620, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7405800500868943639, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -347,6 +379,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
+--- !u!114 &1054340703 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1079126761164086924, guid: 2ccfd4d3d2d6b4945997e16c4318e64e, type: 3}
+  m_PrefabInstance: {fileID: 1054340702}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71eaaf38d51e79b4d8754c3840550c72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MainMenu
 --- !u!1 &1220589608
 GameObject:
   m_ObjectHideFlags: 0
