@@ -383,14 +383,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   totalRounds: 5
-  friendliesPerRound: 8
-  cameraSizes:
-  - 5
-  - 7
-  - 10
+  friendliesPerRound: 08000000i
   cameraTransitionDuration: 2
+  cameraSizePerAreaUpgrade: 100
+  background: {fileID: 0}
   roundQuotas: 040000000500000006000000i
-  quotaRewardPerFriendly: 1
 --- !u!1 &874484464
 GameObject:
   m_ObjectHideFlags: 0
@@ -427,6 +424,15 @@ MonoBehaviour:
   wanderSpeed: 1
   wanderTurnInterval: 2
   arrivalRadius: 0.75
+  migrationDuration: 2
+  noticePauseDuration: 0.5
+  friendlyRarities:
+  - name: Common
+    worth: 1
+  - name: Rare
+    worth: 2
+  - name: Legendary
+    worth: 5
   detectionRadius: 3
   attackRange: 0.5
   attackDuration: 2
@@ -435,8 +441,11 @@ MonoBehaviour:
   maxEnemies: 20
   minSpawnDistanceFromTarget: 2
   minEnemySpawnDistanceFromFriendly: 3
-  friendlyColor: {r: 0, g: 1, b: 0, a: 1}
-  enemyColor: {r: 1, g: 0, b: 0, a: 1}
+  friendlyAnimationState: MothFlying
+  enemyAnimationStates:
+  - BatFlying
+  - HawkFlying
+  - OwlFlying
   lightManager: {fileID: 1982166063}
 --- !u!4 &874484466
 Transform:
@@ -931,6 +940,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeSet
   upgradeList: []
+  upgradeOptions: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

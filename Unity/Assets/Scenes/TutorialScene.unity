@@ -4939,7 +4939,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   totalRounds: 1
-  friendliesPerRound: 50
+  friendliesPerRound: 32000000i
   cameraTransitionDuration: 2
   cameraSizePerAreaUpgrade: 100
   background: {fileID: 1061171553}
