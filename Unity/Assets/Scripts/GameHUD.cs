@@ -37,6 +37,13 @@ public class GameHUD : MonoBehaviour
     [SerializeField] private TextMeshProUGUI gameOverText;
     [SerializeField] private string mainMenuSceneName = "MainMenu";
 
+    [Header("Tutorial")]
+    [SerializeField] GameObject tutorialPanel;
+    [SerializeField] TextMeshProUGUI tutorialTitle;
+    [SerializeField] TextMeshProUGUI tutorialTip;
+    [SerializeField] TutorialTrigger[] tutorialSteps;
+    private int tutorialStep = -1;
+
     //members
     GlobalData globalData;
     float lightEffectTimer = 0.0f;
@@ -89,6 +96,17 @@ public class GameHUD : MonoBehaviour
             GameManager.Instance.RoundStarted -= UpdateQuotaText;
             GameManager.Instance.GameOver -= ShowGameOver;
         }
+    }
+
+    public void StepTutorial()
+    {
+        tutorialStep++;
+        if (tutorialStep >= tutorialSteps.Length) tutorialPanel.SetActive(false);
+        else
+        {
+            tutorialTitle.text = tutorialSteps[tutorialStep].GetTutorialTitle();
+            tutorialTip.text = tutorialSteps[tutorialStep].GetTutorialText();
+        }            
     }
 
     private void AddUpgradeOptions()
@@ -202,9 +220,14 @@ public class GameHUD : MonoBehaviour
         }
     }
 
-    private void OnTutorialTextUpdated(string text)
+    private void OnTutorialTextUpdated(TutorialTrigger trigger)
     {
-        Debug.Log(text);
+        Debug.LogFormat("called {0}", GlobalData.GetInstance().GetTutorialStep());
+        if (tutorialPanel != null)
+        {
+            tutorialTip.text = trigger.GetTutorialText();
+            tutorialTitle.text = trigger.GetTutorialTitle();
+        }
     }
 
     public void ToggleGamePaused(bool isPaused)

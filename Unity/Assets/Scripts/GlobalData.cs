@@ -54,7 +54,7 @@ public class GlobalData : MonoBehaviour
     //////////////////////////////////////////////////////////////////////////////////////////////////////
     public delegate void OnLightScoreUpdated(int score, bool isIncrease);
     public delegate void OnTutorialStepUpdated(int newStep, TutorialTrigger trigger);
-    public delegate void OnTutorialTextUpdated(string newText);
+    public delegate void OnTutorialTextUpdated(TutorialTrigger trigger);
     public delegate void OnUpgradeChoiceFinished();
 
 
@@ -88,7 +88,9 @@ public class GlobalData : MonoBehaviour
     public void SetTutorialStep(int step, TutorialTrigger caller)
     {
         if (onTutorialStepUpdated != null) onTutorialStepUpdated.Invoke(tutorialStep, caller);
-        tutorialStep = step;        
+        if (onTutorialTextUpdated != null) onTutorialTextUpdated.Invoke(caller);
+        tutorialStep = step;
+        Debug.Log(step);
     }
 
     // The upgrade UI calls this once the player has made their choice
