@@ -621,10 +621,10 @@ MonoBehaviour:
     worth: 5
   detectionRadius: 90
   attackRange: 15
-  attackDuration: 1
+  attackDuration: 2
   seenDestroyDuration: 2
-  enemySpawnInterval: 0.25
-  maxEnemies: 50
+  enemySpawnInterval: 0.75
+  maxEnemies: 30
   minSpawnDistanceFromTarget: 60
   minEnemySpawnDistanceFromFriendly: 90
   friendlyAnimationState: MothFlying
